@@ -7,6 +7,7 @@
 #define last_d 3
 using namespace std;
 
+// 辅助函数：接收一个无符号整数参数a，将将其转换为字符串并返回
 string my_to_string(unsigned int a)
 {
    	string str="";
@@ -19,12 +20,13 @@ string my_to_string(unsigned int a)
 	astr.resize(str.length());
 	for(int i=str.length()-1;i>=0;i--)
 		astr[str.length()-1-i] = str[i]; 
-     return astr ;
+    return astr ;
 }
+
 class sample_node
 {
 	public:
-	unsigned int nodeID;
+	unsigned int nodeID; // 节点ID(无符号整型)
 	unsigned int local_count;  // not needed in global counting;
 	unsigned int vision_count; // not needed in asy_sample and BPS sample
 	
@@ -32,6 +34,7 @@ class sample_node
 	
 	sample_node* next;
 	
+	// 无参 构造函数
 	sample_node()
 	{
 		nodeID = 0;
@@ -40,6 +43,7 @@ class sample_node
 		next = NULL;
 		first_edge = -1;
 	} 
+	// 两个参数 构造函数
 	sample_node(unsigned int s, int edge = -1)
 	{
 		nodeID = s;
@@ -48,6 +52,8 @@ class sample_node
 		local_count = 0;
 		vision_count = 0;
 	 } 
+
+	 // 初始化成员变量
 	 void init(unsigned int s, int edge = -1)
 	 {
 	 	nodeID = s;
@@ -56,10 +62,12 @@ class sample_node
 		local_count = 0;
 		vision_count = 0;
 	 }
+	 // 设置第一条边
 	 void set_first_edge(int s)
 	 {
 	 	first_edge = s;
 	 }
+	 // 重置成员变量
 	 void reset()
 	 {
 	 	nodeID = 0;
@@ -69,17 +77,19 @@ class sample_node
 	 }
 };
 
- class candidate_unit // class for the candidate edge or test edge in each substream, used in both BPS and SWTC. In BPS, it is the expired but not double-expired test edge. 
- //In SWTC, it is the the not chosen edge in the 2 slices. To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper). 
- //In the other case, it it the edge with largest priority in current slice,   
+ class candidate_unit // class for the candidate edge or test edge in each substream, used in both BPS and SWTC. 
+ // In BPS, it is the expired but not double-expired test edge. 
+ // In SWTC, it is the the not chosen edge in the 2 slices. 
+ 	// To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper). 
+ 	// In the other case, it it the edge with largest priority in current slice,   
  {
  public:
 	 unsigned int s, d; // nodes of the edge
 	 double priority; // can be computed according to s and d. saved only for convinience
-	 long long timestamp;
-	 int time_list_prev; // suppose the size of the sample table is m. A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
+	 long long timestamp;// 时间戳(长整型)
+	 int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
 	 //A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
-	 int time_list_next;
+	 int time_list_next; // 在时间列表中后一个元素位置指针
 	 candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)
 	 {
 		 s = snum;
@@ -99,6 +109,7 @@ class sample_node
 		 time_list_next = next;
 	 }
  };
+ 
 class sample_unit  // class for the sampled edge in each substream, used both in SWTC and BPS
 {
 	public:
@@ -109,6 +120,7 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 	int time_list_prev; // same as the pointers in candidate unit;
 	int time_list_next;
 	candidate_unit vice;
+
 	sample_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
 		s = snum;
@@ -125,6 +137,7 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 	void set_next_d(int d){pointers[next_d] = d;}
 	void set_last_s(int s){pointers[last_s] = s;}
 	void set_last_d(int d){pointers[last_d] = d;}
+	
 	void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
 		s = snum;

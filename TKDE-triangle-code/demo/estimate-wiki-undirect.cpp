@@ -13,27 +13,33 @@ int main()
 	 	unsigned int s, d, w, w_;
         long long t;
         string t1, t2, p;
-        double time_unit = 18.545;	// the unit of the window length, we use average time span as unit, namely (maximum timestamp- minimum timestamp)/number_of_edges .
+        double time_unit = 18.545;	// the unit of the window length, we use average time span as unit, namely (maximum timestamp - minimum timestamp)/number_of_edges.
+        // time_unit = (最大时间戳 - 最小时间戳)/边的数量
         int gap = 2000000; // the length of the sliding window
+        // 滑动窗口的长度
         for(int hindex =0;hindex<5; hindex++)	// use different hash functions to carry out multiple groups of 
         {
         	for(int sample_size = 40000;sample_size<=120000;sample_size+=20000)
-        	{
-        	long wsize = gap*time_unit;
+        	{ // 样本大小从 40k 开始到 120k，20k的间隔大小
+        	long wsize = gap*time_unit; // wsize = 2M * (40k~120k)
             long count = 0;
-            ifstream fin("../../data/WikiTalk.txt");	// 
-            string index = "result/undirect/Wiki/EstimateResult_wiki_undirect_2M_h";
+            
+            ifstream fin("../../data/WikiTalk.txt"); //读取数据集
+            string index = "result/undirect/Wiki/EstimateResult_wiki_undirect_2M_h";//输出结果
             index += char(hindex+'0');
             index += '_';
             index += my_to_string(sample_size/20000);
             ofstream fout(index.c_str());
+
             asy_sample* ac = new asy_sample(sample_size, wsize,10, hindex);
             sample* sc = new sample(sample_size, wsize, hindex);
             BPSsample* bc = new BPSsample(sample_size, wsize, hindex);
+
             long long t0 = -1;
             long long tmp_point = 0;
             int checkpoint = wsize/10;
             int num = 0;
+            
             while(fin>>s>>d>>t)
             {
                 if(t0<0) t0 = t;

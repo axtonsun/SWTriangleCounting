@@ -6,11 +6,11 @@
 class NodeTable
 {
 public:
-		sample_node* table;
+		sample_node* table; // 一个指向sample_node类型对象的指针，用于存储节点表
 		int k;
 		int length;
 		int slice_length;
-
+		// 构造函数，接收两个整数参数，并初始化类成员变量，同时创建新的sample_node数组并初始化
 		NodeTable(int k_num, int l_num)
 		{
 			k = k_num;
@@ -20,6 +20,7 @@ public:
 			for (int i = 0; i<length; i++)
 				table[i].init(0);
 		}
+		// 删除所有在堆上动态分配的内存
 		~NodeTable()
 		{
 			for (int i = 0; i<length; i++)
@@ -39,19 +40,25 @@ public:
 			delete[]table;
 		}
 
+		// 插入新节点到表中
 		sample_node* insert(unsigned long node, int edge = -1);
 
+		// 设置特定节点的边缘值
 		sample_node* set_edge(unsigned long node, int edge);
 
+		// 获取特定节点的边缘值
 		int get_edge(unsigned long node);
 
+		// 将给定ID转换为对应位置(如果存在)
 		sample_node* ID_to_pos(unsigned long node);
 
+		// 删除具有给定ID的元素(如果存在)
 		void delete_via_ID(unsigned long node);
+
+		// 将vision_count复制到local_count，并重置vision_count
 		void active();
 
 };
-
 
 
 sample_node* NodeTable::insert(unsigned long node, int edge)
@@ -161,8 +168,6 @@ sample_node* NodeTable::set_edge(unsigned long node, int edge)
 	return NULL;
 }
 
-
-
 int NodeTable::get_edge(unsigned long node)
 {
 	string node_s = my_to_string(node);
@@ -262,7 +267,7 @@ void NodeTable::delete_via_ID(unsigned long node)
 	return;
 }
 
-void NodeTable :: active()  // only used in SWTC with vision counting, and in local counting semantics
+void NodeTable::active()  // only used in SWTC with vision counting, and in local counting semantics
 {
 	for (int i = 0; i < length; i++)
 	{

@@ -51,7 +51,7 @@ struct count_result
 	 }
 		
 	
-		void modify_triangle_B(sample_node* pos_s, sample_node* pos_d, long long last_mark, int op) //op = 1 means to add, op = -1 means to minus.
+	void modify_triangle_B(sample_node* pos_s, sample_node* pos_d, long long last_mark, int op) //op = 1 means to add, op = -1 means to minus.
 	{
 		vector<unsigned int> v1;
 		vector<unsigned int> v2;
@@ -190,6 +190,7 @@ struct count_result
 		else
 			modify_triangle_B(pos_s, pos_d, last_mark, op);
 	} 
+	
 	void modify_illusion_B(sample_node* pos_s, sample_node* pos_d, long long land_mark, int op) //op = 1 means to add, op = -1 means to minus.
 	{
 		vector<unsigned int> v1;
@@ -538,6 +539,7 @@ struct count_result
 		else
 			modify_both_B(pos_s, pos_d, last_mark, land_mark, op);
 	}
+	
 	void link_list(sample_node* pos_s, sample_node* pos_d, int pos, unsigned int s_num, unsigned int d_num)
 	{
 
@@ -554,7 +556,7 @@ struct count_result
 
 	}
 	
-		void dismiss(sample_node* pos_s, sample_node* pos_d, int pos)
+	void dismiss(sample_node* pos_s, sample_node* pos_d, int pos)
 	{
 		unsigned int s = pos_s->nodeID;
 		unsigned int d = pos_d->nodeID;
@@ -656,7 +658,7 @@ struct count_result
 		
 		return;
 	}
-	 void insert(unsigned int s_num, unsigned int d_num, double p, long long time, long long land_mark,long long last_mark, int hashindex)
+	void insert(unsigned int s_num, unsigned int d_num, double p, long long time, long long land_mark,long long last_mark, int hashindex)
 	 {
 		 string s = my_to_string(s_num);
 		 string d = my_to_string(d_num);
@@ -889,7 +891,7 @@ struct count_result
 
 		 return;
 	 }
-	 void update(long long time, long long land_mark, long long last_mark)  // when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
+	void update(long long time, long long land_mark, long long last_mark)  // when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
 		 // added into the curresponding cross lists;
 	 {
 		int tsl_pos = edge_table->tsl_head;
