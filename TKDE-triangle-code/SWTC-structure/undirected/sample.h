@@ -10,21 +10,25 @@
 #endif
 #include "sampletable.h"
 
-
 using namespace std;
 
+// undirected & binary counting
 class sample
 {
 public:
-	SampleTable* st;
+	SampleTable* st; // 指向 SampleTable 类型的指针
 	int window_size;
 	long long current_time;
 	long long land_mark;
 	long long last_mark;
 	int edge_estimate;
-	double sample_prob;
-	int hashindex;
+	double sample_prob; //样本概率
+	int hashindex; // 哈希索引
 
+    // 采样器的初始化
+    // size 是子流的数量，k
+    // w 是窗口长度(N 乘以时间单位(这是数据集的平均时间跨度))
+    // hi 是哈希索引(将 hi 从0改变到10将使 SWTC 能够用不同的哈希函数实现)
 	sample(int size, int w, int hi)
 	{
 		st = new SampleTable(size);
@@ -34,11 +38,15 @@ public:
 		last_mark = 0;
 		hashindex = hi;
 	}
-	~sample()
+
+    ~sample()
 	{
 		delete st;
 	}
-	void proceed(unsigned int s, unsigned int d, long long time)
+
+    // 处理一个无向边(s,d)其时间戳为time
+    // 当前时间T将更新为参数time
+    void proceed(unsigned int s, unsigned int d, long long time)
 	{
 		if (s < d)
 		{
@@ -63,6 +71,7 @@ public:
 		st->insert(s, d, p, time, land_mark, last_mark, hashindex);
 	}
 
+    // 为查询做准备，需要调用以下函数之前被调用
 	void prepare()
 	{
 		int m = st->size;
@@ -75,17 +84,23 @@ public:
 		edge_estimate = total_num;
 		//cout << q << ' ' << total_num << endl;
 		//cout <<"st count "<< sample_num << ' ' << total_num << ' '<<st->edge_count<<' '<<st->q_count<<endl;
+        // sample_num 为样本图中的边数 m
+        // total_num 为估算出的滑动窗口内互异边数量 n
 		sample_prob = (double(sample_num) / total_num) * (double(sample_num - 1) / (total_num - 1)) * (double(sample_num - 2) / (total_num - 2));
 
 	}
-	int count()
-	{
 
+    // 返回全局三角形的估计值
+    // 样本图中全局三角形个数 / 三角形三条边均被加入样本的概率
+    int count()
+	{
 		//cout <<"tc: "<<st->trcount<<' '<< p << endl;
 		return (st->trcount) / sample_prob;
 
 	}
-	int local_count(unsigned int v)
+
+    // 返回节点 v 的局部计数
+    int local_count(unsigned int v)
 	{
 		sample_node* tmp = st->node_table->ID_to_pos(v);
 		if (!tmp)
@@ -93,7 +108,10 @@ public:
 		else
 			return (tmp->local_count) / sample_prob;
 	}
-	void all_local(unordered_map<unsigned int, int>& cr)
+
+    // 将所有采样节点的局部计数以<node ID,local count>对的形式存储在 cr 中
+    // 不在采样图中的节点不会被报告 这些节点的局部计数估计值为 0
+    void all_local(unordered_map<unsigned int, int>& cr)
 	{
 		for(int i=0;i<st->node_table->length;i++)
 		{

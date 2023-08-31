@@ -165,7 +165,7 @@ We only use it as a comparison. Thus the code is simple with limmited queries su
 
 It has 3 interfaces:
 `void nv_sample(int size, int w, int hi)`: initialization function. The parameters are the same as `sample.h`
-`void proceed(unsigined int s, unsigned int d, long long time)`: the same interface as proceed() in `sample.h`
+`void proceed(unsigined int s, unsigned int d, long long time)`: the same interface as `proceed()` in `sample.h`
 `void count()`: estimate the number of global triangles in the sliding window. 
 
 We use **prepare() function** in `sample.h` and `asy_sample.h` as they support both **local and global count**, and these query functions share the same preparation steps. 
@@ -196,7 +196,7 @@ It includes 2 files:
 
 It has 6 interfaces:
 
-​	`void BPS-sample(int si	ze, int w, in hi)`: initialization function, parameters are the same as initialization function of sample.h
+​	`void BPS-sample(int si	ze, int w, in hi)`: initialization function, parameters are the same as initialization function of `sample.h`
 ​	`proceed()`, `count()`, `local_count()`, `all_local()`: functions to process new edges, estimate global triangles, estimate local count of one node, and estimate local count of all nodes. Parameters and returned values are the same as functions of the same name;
 
 `BPS-sampletable.h`: code for BPSsampleTable class, which maintains the sample graph and is the major component of the BPSsample class.
@@ -211,7 +211,7 @@ They are *the directed version* of `BPS-sample.h` and `BPS-sampletable.h`, and h
 
 It includes 2 files: `BPS-sample-weighted.h` and `BPS-sampletable-weighted.h`. 
 
-They are *the weighted version* of `BPS-sample.h` and `BPS-sampletable.h`, and have the same interfaces as the corresponding *binary version* (except that the returned value of count() function in BPS-sample-weighted in unsigned long long type).
+They are *the weighted version* of `BPS-sample.h` and `BPS-sampletable.h`, and have the same interfaces as the corresponding *binary version* (except that the returned value of `count()` function in BPS-sample-weighted in unsigned long long type).
 
 
 ## Golden-triangle

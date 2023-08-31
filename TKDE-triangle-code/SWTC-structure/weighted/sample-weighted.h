@@ -10,9 +10,10 @@
 #endif
 #include "sampletable-weighted.h"
 
-
 using namespace std;
 
+// undirected & weighted counting
+// sample.h 的加权版本，与 sample.h 具有相同的接口
 class sample
 {
 public:
@@ -70,12 +71,14 @@ public:
 		total_num = total_num *(double(st->valid_num) / st->edge_count);
 		edge_estimate = total_num;;
 		sample_prob = (double(sample_num) / total_num) * (double(sample_num - 1) / (total_num - 1)) * (double(sample_num - 2) / (total_num - 2));
-
 	}
+
+    // 与 sample.h 不同的是 count() 函数返回 无符号长整型 结果(因为三角形计数可能非常大)
 	unsigned long long count()
 	{
 		return (st->trcount) / sample_prob;
 	}
+
 	unsigned int local_count(unsigned int v)
 	{
 		sample_node* tmp = st->node_table->ID_to_pos(v);
@@ -84,6 +87,7 @@ public:
 		else
 			return (tmp->local_count) / sample_prob;
 	}
+
 	void all_local(unordered_map<unsigned int, unsigned int>& cr)
 	{
 		for(int i=0;i<st->node_table->length;i++)

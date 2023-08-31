@@ -27,6 +27,7 @@ public:
 	int hashindex;
 	int gswitch_iter; // use a iterator to mark the group with largest group ID and has switched slice. This iterator increase from 0 to group_num and return to 0;
 
+    // g 是AG技术中的 group 的数量
 	asy_sample(int size, int w, int g, int hash_index)
 	{
 		ss = new asy_sampletable(size, g);
@@ -46,7 +47,8 @@ public:
 		sample_prob = 0;
 
 	}
-	~asy_sample()
+
+    ~asy_sample()
 	{
 		delete ss;
 		delete []land_mark;
@@ -101,7 +103,8 @@ public:
 		sample_prob = 	(double(sample_size) / edge_estimate) * (double(sample_size - 1) / (edge_estimate - 1)) * (double(sample_size - 2) / (edge_estimate - 2));
 
 	}
-	int count()	
+
+    int count()
 	{
 		return (ss->trcount) / sample_prob;
 	}

@@ -13,19 +13,27 @@ int main()
 	 	unsigned int s, d, w, w_;
         long long t;
         string t1, t2, p;
+
         double time_unit = 18.545;	// the unit of the window length, we use average time span as unit, namely (maximum timestamp - minimum timestamp)/number_of_edges.
-        // time_unit = (最大时间戳 - 最小时间戳)/边的数量
+        // 时间单位定义为平均时间跨度 time_unit = (最大时间戳 - 最小时间戳)/边的数量
+
         int gap = 2000000; // the length of the sliding window
-        // 滑动窗口的长度
+        // 滑动窗口长度设置为2百万
+
         for(int hindex =0;hindex<5; hindex++)	// use different hash functions to carry out multiple groups of 
-        {
+        {//使用不同哈希函数执行多组操作 hindex从0到4
+            // 对于每个子流数目，它使用不同的哈希函数进行五次实验
+
         	for(int sample_size = 40000;sample_size<=120000;sample_size+=20000)
-        	{ // 样本大小从 40k 开始到 120k，20k的间隔大小
-        	long wsize = gap*time_unit; // wsize = 2M * (40k~120k)
+        	{ // 样本大小从 4万 增加到 12万，2万的间隔大小
+        	long wsize = gap*time_unit; // wsize = 2百万*平均时间跨度
             long count = 0;
             
-            ifstream fin("../../data/WikiTalk.txt"); //读取数据集
-            string index = "result/undirect/Wiki/EstimateResult_wiki_undirect_2M_h";//输出结果
+            ifstream fin("../data/Sorted/WikiTalk.txt"); //读取数据集
+            string index = "../result/undirect/Wiki/EstimateResult_wiki_undirect_2M_h";//输出结果
+            // EstimateResult_wiki_undirect_2M_h?_xx
+            // ？是哈希索引，从0变化到4
+            // xx是 (子流数量)/2万
             index += char(hindex+'0');
             index += '_';
             index += my_to_string(sample_size/20000);
@@ -37,11 +45,13 @@ int main()
 
             long long t0 = -1;
             long long tmp_point = 0;
+            // 在每次实验中，当滑动窗口其长度的 1/10 时(前两个窗口没有checkpoint)，它会设定一个checkpoint
+            // 并在每个 checkpoint 计算 SWTC、Baseline、Golden 的三角形估计
             int checkpoint = wsize/10;
             int num = 0;
             
             while(fin>>s>>d>>t)
-            {
+            {//从输入流中读取数据到变量s,d,t
                 if(t0<0) t0 = t;
                 s = s + 1;
                 d = d + 1;
@@ -54,18 +64,23 @@ int main()
                 sc->proceed(s, d, count);
 
                 if (count>=2*wsize && int(count/checkpoint) > tmp_point)	// whenever the window 
-                {
+                { // count 大于等于 2倍wsize 且 count/checkpoint 大于 tmp_point
                     srand((int)time(0));
                     tmp_point = count/checkpoint;
                     ac->prepare();
                     bc->prepare();
                     sc->prepare();
+                    // 写入数据
+                    // 第1个参数: 有效数量
+                    // 第2个参数: 边估计值(为估算出的滑动窗口内互异边数量 n)
+                    // 第3个参数: 样本图中的全局三角形个数
+                    // 第4个参数: 流图中的全局三角形个数
                     fout<<"asyn triangle "<< ac->valid_count() <<' '<<ac->edge_estimate<<' '<<ac->ss->trcount<<' '<<ac->count()<<endl;
                     fout<<"BPS triangle "<<bc->st->valid_num<<' '<<bc->edge_estimate<<' '<<bc->st->trcount<<' '<<bc->count()<<endl;
                     fout<<"swtc triangle "<<sc->st->valid_num<<' '<<sc->edge_estimate<<' '<<sc->st->trcount<<' '<<sc->count()<<endl;
                     fout<<endl;
                     cout<<sample_size<<" check point " << tmp_point << endl;
-                                //cout<<t<<' '<<count<<' '<<num<<endl;
+                    //cout<<t<<' '<<count<<' '<<num<<endl;
                 }
             }
             fin.close();

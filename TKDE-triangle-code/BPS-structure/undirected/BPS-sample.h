@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// undirected & binary counting
 class BPSsample
 {
 public:
@@ -21,6 +22,7 @@ public:
 	double sample_prob;
 	int hashindex;
 
+    // 初始化函数，参数与 sample.h 的初始化函数相同
 	BPSsample(int size, int w, int hi)
 	{
 		st = new BPSSampleTable(size);
@@ -33,6 +35,7 @@ public:
 		delete st;
 	}
 
+    // 处理新边
 	void proceed(unsigned long s, unsigned long d, long time)
 	{
 		if (s < d)
@@ -63,15 +66,17 @@ public:
 		edge_estimate = total_num;
 		//cout <<"BPS valid count "<< sample_num << "total edge" << total_num << "total sample " << st->edge_count << "q count" << st->q_count << endl;
 		sample_prob = (double(sample_num) / total_num) * (double(sample_num - 1) / (total_num - 1)) * (double(sample_num - 2) / (total_num - 2));
-
 	}
+
+    // 估计全局三角形
 	int count()
 	{
-
 		//cout <<"tc: "<<st->trcount<<' '<< p << endl;
 		return (st->trcount) / sample_prob;
 
 	}
+
+    // 估计节点的局部三角形
 	int local_count(unsigned int v)
 	{
 		sample_node* tmp = st->node_table->ID_to_pos(v);
@@ -80,7 +85,9 @@ public:
 		else
 			return (tmp->local_count) / sample_prob;
 	}
-		void all_local(unordered_map<unsigned int, int>& cr)
+
+    // 估计所有节点的局部三角形数量
+    void all_local(unordered_map<unsigned int, int>& cr)
 	{
 		for(int i=0;i<st->node_table->length;i++)
 		{

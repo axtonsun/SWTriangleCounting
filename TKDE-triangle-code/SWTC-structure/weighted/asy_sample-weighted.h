@@ -94,10 +94,10 @@ public:
 			 group_card = -log(1 - double(ss->edge_count[i]) / m)*m;
 		edge_estimate += group_card *(double(ss->valid_num[i]) / ss->edge_count[i]);
 		}
-
 		sample_prob = 	(double(sample_size) / edge_estimate) * (double(sample_size - 1) / (edge_estimate - 1)) * (double(sample_size - 2) / (edge_estimate - 2));
-
 	}
+
+    // 返回 无符号长整型 结果(因为三角形计数可能非常大)
 	unsigned long long count()	
 	{
 		return (ss->trcount) / sample_prob;

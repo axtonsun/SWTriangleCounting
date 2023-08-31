@@ -11,6 +11,10 @@
 
 using namespace std;
 
+// undirected & weighted counting
+// BPS-sample.h 和 BPS-sampletable.h 的 加权版本
+// 与相应的 binary 版本具有相同的接口
+// 除了 count() 返回值为 无符号长整型
 class BPSsample
 {
 public:

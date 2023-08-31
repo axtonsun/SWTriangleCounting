@@ -11,6 +11,9 @@
 
 using namespace std;
 
+// directed & binary counting
+// BPS-sample.h 和 BPS-sampletable.h 的 有向版本
+// 与相应的无向版本具有相同的接口
 class BPSsample
 {
 public:

@@ -12,6 +12,8 @@
 
 using namespace std;
 
+// directed & binary counting
+// sample.h 的有向版本，与 sample.h 具有相同的接口
 class sample
 {
 public:

@@ -18,8 +18,9 @@ public:
 	long long last_mark;
 	int edge_estimate;
 	int hashindex;
-	
 
+    // 初始化函数
+    // 参数与 sample.h 中相同
 	nv_sample(int size, int w, int hash_index)
 	{
 		ss = new Simple_Sample(size);
@@ -34,6 +35,7 @@ public:
 		delete ss;
 	}
 
+    // 与 sample.h 中的 proceed() 接口相同
 	void proceed(unsigned int  s, unsigned int  d, long long time)
 	{
 		if (s < d)
@@ -58,6 +60,10 @@ public:
 		}
 		ss->insert(s, d, p, time, land_mark, last_mark, hashindex);
 	}
+
+    // 估算滑动窗口中全局三角形的数量
+    // sample.h 和 asy_sample.h 中使用了 prepare 函数，因为它们同时支持 局部和全局计数，并且这些查询共享相同的准备步骤
+    // 只提供 全局计数 因此 prepare 的步骤都包含在 count() 里
 	int count()
 	{
 		int m = ss->size;

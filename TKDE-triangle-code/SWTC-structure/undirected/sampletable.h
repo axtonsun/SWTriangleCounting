@@ -9,7 +9,9 @@ struct count_result
 	int trcount;
 	int illusion;
 };
- class SampleTable
+
+// 维护样本图并且是 sample 类的主要组成部分
+class SampleTable
  {
  	public:
  	EdgeTable* edge_table;
@@ -24,6 +26,8 @@ struct count_result
 	double q_count;
 	double illusion_q;
 
+    // 接受一个整型参数s，然后根据s初始化类中的一些变量
+    // 并且创建一个EdgeTable类型和一个NodeTable类型的对象
  	SampleTable(int s)
  	{
  		size = s;
@@ -44,7 +48,7 @@ struct count_result
 		delete edge_table;
 		delete node_table;
 	 }
-			
+
 	void modify_triangle(sample_node* pos_s, sample_node* pos_d, long long last_mark, int op) // op = 1 means add, op = -1 means minus
 	{
 		vector<unsigned int> v1;
