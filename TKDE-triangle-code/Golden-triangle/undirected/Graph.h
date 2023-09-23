@@ -54,17 +54,12 @@ public:
 	}
 
 	void delete_edge(unsigned int s, unsigned int d);
-
 	void insert_edge(unsigned int s, unsigned int d);
-
-
 	int count_triangle();
 	void local_count(unordered_map<unsigned int, int> &cr);
 	unsigned long long count_wedge(); 
 	unsigned long long weighted_count_triangle();
 	void weighted_local_count(unordered_map<unsigned int, unsigned long long> &cr);
-
-
 
 	int get_edgenum()
 	{
@@ -73,10 +68,8 @@ public:
 
 };
 
-
 void Graph::insert_edge(unsigned int s, unsigned int d)
 {
-
 	bool find = false;
 	unordered_map<unsigned int, golden_edge*>::iterator it;
 	

@@ -75,6 +75,7 @@ public:
 	{
 		return (st->trcount) / sample_prob;
 	}
+
 	int local_count(unsigned int v)
 	{
 		sample_node* tmp = st->node_table->ID_to_pos(v);

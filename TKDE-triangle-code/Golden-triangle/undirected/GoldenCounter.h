@@ -126,7 +126,7 @@ class GoldenCounter
 		 	return graph->weighted_count_triangle();
 		 }
 
-         void local_count(unordered_map<unsigned int, int> &cr)
+        void local_count(unordered_map<unsigned int, int> &cr)
 		{
 		  	graph->local_count(cr);	
 		}

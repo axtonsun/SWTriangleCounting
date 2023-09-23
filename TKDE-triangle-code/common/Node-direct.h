@@ -24,6 +24,7 @@ string my_to_string(unsigned int a)
 		astr[str.length()-1-i] = str[i]; 
      return astr ;
 }
+
 class sample_node
 {
 	public:
@@ -87,7 +88,7 @@ class sample_node
 	 }
 };
  
-  class candidate_unit
+class candidate_unit
  {
  public:
 	 unsigned int  s, d;
@@ -115,7 +116,8 @@ class sample_node
 		 time_list_next = next;
 	 }
  };
- class sample_unit
+
+class sample_unit
 {
 	public:
 	unsigned int s, d;

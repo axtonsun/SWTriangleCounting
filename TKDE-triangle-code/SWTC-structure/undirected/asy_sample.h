@@ -28,18 +28,31 @@ public:
 	int gswitch_iter; // use a iterator to mark the group with largest group ID and has switched slice. This iterator increase from 0 to group_num and return to 0;
 
     // g 是AG技术中的 group 的数量
+	// size: 4万~12万 w: 3709万 g:10 hindex: 0~4
 	asy_sample(int size, int w, int g, int hash_index)
 	{
 		ss = new asy_sampletable(size, g);
-		hashindex = hash_index;
-		group_num = g;
-		window_size = w;
+		hashindex = hash_index;// 0
+		group_num = g;// 10
+		window_size = w;// 3709万
+
 		current_time = 0;
 		land_mark = new long long[g];
 		last_mark = new long long[g];
 		for(int i=0;i<g;i++)
 		{
 			land_mark[i] = -(g-i)*(window_size/g);
+			//-37090000
+            //-33381000
+            //-29672000
+            //-25963000
+            //-22254000
+            //-18545000
+            //-14836000
+            //-11127000
+            //-7418000
+            //-3709000
+//			std::cout<< land_mark[i]<<std::endl;
 		}
 		gswitch_iter = 0;
 		sample_size = 0;
@@ -56,26 +69,49 @@ public:
 	}
 
 	void proceed(unsigned int s, unsigned int d, long long time)
-	{
+	{// s: 231370 d: 204123 time: 0
+        // 两顶点值交换
 		if (s < d)
 		{
 			unsigned int tmp = s;
 			s = d;
 			d = tmp;
 		}
+        // 无符号int型 转换成 string型
+		// s_string: "231370"   s: 231370
 		string s_string = my_to_string(s);
 		string d_string = my_to_string(d);
+        // 两个string型相连
+        // eg. s="231370" d="204123" e="231370204123"
 		string e = s_string + d_string;
+
+		// 将字符串e通过哈希函数转换为一个大于0小于等于1的浮点数p
+		// 通过hashindex从hfunc数组中获取了一个函数指针，然后调用这个哈希函数，对字符串e进行哈希处理
+		// 具体来说，e.c_str()将字符串e转换为C风格字符串，然后通过(const unsigned char*)将其转换为无符号字符指针，最后用e.length()作为哈希函数的长度参数
+		// 对哈希函数的结果进行了取模运算（% 1000000），然后加上1。取模运算的结果范围是0到999999，加1后的范围是1到1000000
+		// 将上一步得到的结果强制转换为double类型，然后除以1000001。这一步的结果范围是大于0小于等于1的浮点数
+		// hashindex: 0  -> MurmurHash
+		// h: 2299451388 % 1000000 + 1 = 451389
+		// p: 0.45138854861145139 = 451389.0 / 1000001
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000 + 1) / 1000001;
+		// hashindex: 0+2  group_num: 10  e.length(): 12
+		// group: 1 = h: 1412841161 % 10
 		int group  = ((*hfunc[hashindex+2])((unsigned char*)(e.c_str()), e.length()) % group_num);
 		current_time = time;
+        // time: 0 window_size: 37090000
 		ss->update(time - window_size);
+
 		while (time - land_mark[gswitch_iter] >= window_size)
-		{
+		{// 0-landmark[0] >= 3709万
 			assert(time - land_mark[gswitch_iter] < 2 * window_size);
 			last_mark[gswitch_iter] = land_mark[gswitch_iter];
 			land_mark[gswitch_iter] = land_mark[gswitch_iter] + window_size;
+//			std::cout<< last_mark[gswitch_iter]<<std::endl;
+//			std::cout<< land_mark[gswitch_iter]<<std::endl;
+
+			//
 			ss->slice_switch(last_mark[gswitch_iter], gswitch_iter);
+
 			gswitch_iter++;
 			if(gswitch_iter==group_num)
 				gswitch_iter = 0;

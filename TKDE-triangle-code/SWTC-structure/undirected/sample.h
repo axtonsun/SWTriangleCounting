@@ -29,14 +29,15 @@ public:
     // size 是子流的数量，k
     // w 是窗口长度(N 乘以时间单位(这是数据集的平均时间跨度))
     // hi 是哈希索引(将 hi 从0改变到10将使 SWTC 能够用不同的哈希函数实现)
+    // 4万~12万 3709万 0~4
 	sample(int size, int w, int hi)
 	{
-		st = new SampleTable(size);
-		window_size = w;
+		st = new SampleTable(size); //4万~12万
+		window_size = w; // 3709万
 		current_time = 0;
 		land_mark = 0;
 		last_mark = 0;
-		hashindex = hi;
+		hashindex = hi; // 0~4
 	}
 
     ~sample()
@@ -48,18 +49,29 @@ public:
     // 当前时间T将更新为参数time
     void proceed(unsigned int s, unsigned int d, long long time)
 	{
+        // 源id < 目的id 交换位置
+        // s:2 d:4822
 		if (s < d)
 		{
 			unsigned int tmp = s;
 			s = d;
 			d = tmp;
 		}
-		string s_string = my_to_string(s);
-		string d_string = my_to_string(d);
+        // s:"4822" d:"2" e:"48222"
+		string s_string = my_to_string(s); // wiki: 4822=4821+1
+		string d_string = my_to_string(d); // wiki: 2=1+1
 		string e = s_string + d_string;
+
+		// p: 0.34361265638734362
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000+1) / 1000001;
+
+		// time:0
 		current_time = time;
+
+        // -3709万 = time-window_size land_mark:0 last_mark:0
 		st->update(time-window_size, land_mark, last_mark);
+
+		// 0-0 >= 3709万
 		if (time - land_mark >= window_size)
 		{
 			assert(time - land_mark < 2*window_size);
@@ -68,24 +80,34 @@ public:
 			st->ective();
 		//	cout << time << ' '<<land_mark<<" effected" << endl;
 		}
+
+		// 4822->2
+		// p: 0.34361265638734362
+		// time:0 land_mark:0 last_mark:0 hashindex: 0
 		st->insert(s, d, p, time, land_mark, last_mark, hashindex);
 	}
 
     // 为查询做准备，需要调用以下函数之前被调用
 	void prepare()
 	{
-		int m = st->size;
-		double alpha = 0.7213 / (1 + (1.079 / m));
-		int total_num = (double(alpha * m * m) / (st->q_count));
-		int sample_num = st->valid_num;
-		if (total_num < 2.5*m)
-			total_num = -log(1 - double(st->edge_count) / m)*m;
-		total_num = total_num *(double(st->valid_num) / st->edge_count);
-		edge_estimate = total_num;
-		//cout << q << ' ' << total_num << endl;
+		int m = st->size; // 40000
+		double alpha = 0.7213 / (1 + (1.079 / m)); // alpha: 0.72128054345734038
+		// st->q_count: 34834.332702636719
+        int total_num = (double(alpha * m * m) / (st->q_count));// 33129
+		int sample_num = st->valid_num; // 7588
+
+        if (total_num < 2.5*m)
+			total_num = -log(1 - double(st->edge_count) / m)*m; // 8414
+		total_num = total_num *(double(st->valid_num) / st->edge_count); // 8414 * (7588/7588)
+
+        edge_estimate = total_num; // 8414
+
+        //cout << q << ' ' << total_num << endl;
 		//cout <<"st count "<< sample_num << ' ' << total_num << ' '<<st->edge_count<<' '<<st->q_count<<endl;
+
         // sample_num 为样本图中的边数 m
         // total_num 为估算出的滑动窗口内互异边数量 n
+		// sample_prob: 0.73342816564049085
 		sample_prob = (double(sample_num) / total_num) * (double(sample_num - 1) / (total_num - 1)) * (double(sample_num - 2) / (total_num - 2));
 
 	}

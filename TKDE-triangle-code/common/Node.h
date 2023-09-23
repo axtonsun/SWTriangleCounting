@@ -43,7 +43,8 @@ class sample_node
 		next = NULL;
 		first_edge = -1;
 	} 
-	// 两个参数 构造函数
+
+    // 两个参数 构造函数
 	sample_node(unsigned int s, int edge = -1)
 	{
 		nodeID = s;
@@ -54,6 +55,7 @@ class sample_node
 	 } 
 
 	 // 初始化成员变量
+     // s: 0
 	 void init(unsigned int s, int edge = -1)
 	 {
 	 	nodeID = s;
@@ -62,12 +64,14 @@ class sample_node
 		local_count = 0;
 		vision_count = 0;
 	 }
-	 // 设置第一条边
+
+     // 设置第一条边
 	 void set_first_edge(int s)
 	 {
 	 	first_edge = s;
 	 }
-	 // 重置成员变量
+
+     // 重置成员变量
 	 void reset()
 	 {
 	 	nodeID = 0;
@@ -80,8 +84,8 @@ class sample_node
  class candidate_unit // class for the candidate edge or test edge in each substream, used in both BPS and SWTC. 
  // In BPS, it is the expired but not double-expired test edge. 
  // In SWTC, it is the the not chosen edge in the 2 slices. 
- 	// To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper). 
- 	// In the other case, it it the edge with largest priority in current slice,   
+ // To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper).
+ // In the other case, it it the edge with largest priority in current slice,
  {
  public:
 	 unsigned int s, d; // nodes of the edge
@@ -90,7 +94,8 @@ class sample_node
 	 int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
 	 //A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
 	 int time_list_next; // 在时间列表中后一个元素位置指针
-	 candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)
+
+     candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)
 	 {
 		 s = snum;
 		 d = dnum;
@@ -99,7 +104,8 @@ class sample_node
 		 time_list_prev = prev;
 		 time_list_next = next;
 	 }
-	 void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
+
+     void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	 {
 		 s = snum;
 		 d = dnum;
@@ -121,6 +127,8 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 	int time_list_next;
 	candidate_unit vice;
 
+    // edgetable.h 中 EdgeTable 构造函数调用
+    // snum =0
 	sample_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
 		s = snum;
@@ -133,20 +141,22 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 		time_list_next = next;
 		vice.reset();
 	}
-	void set_next_s(int s){pointers[next_s] = s;}
+
+    void set_next_s(int s){pointers[next_s] = s;}
 	void set_next_d(int d){pointers[next_d] = d;}
 	void set_last_s(int s){pointers[last_s] = s;}
 	void set_last_d(int d){pointers[last_d] = d;}
-	
+
+    // s_num: 4822 d_num: 2 p: 0.34361265638734362 time: 0 prev: -1 next:-1
 	void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
 		s = snum;
 		d = dnum;
 		for(int i=0;i<4;i++)
 			pointers[i] = -1;
-		priority = p;
-		timestamp = time;
-		time_list_prev = prev;
-		time_list_next = next;
+		priority = p; // priority: 0.34361265638734362
+		timestamp = time; // 0
+		time_list_prev = prev; // -1
+		time_list_next = next; // -1
 	}
 }; 

@@ -40,6 +40,7 @@ public:
 		}
 
 	}
+
 	~asy_sampletable()
 	{
 		delete edge_table;
@@ -107,7 +108,8 @@ public:
 		}
 
 	}
-	void link_list(sample_node* pos_s, sample_node* pos_d, int pos)
+
+    void link_list(sample_node* pos_s, sample_node* pos_d, int pos)
 	{
 		unsigned int s_num = pos_s->nodeID;
 		unsigned int d_num = pos_d->nodeID;
@@ -134,7 +136,8 @@ public:
 		pos_d->set_first_edge(pos);			// set the cross list;
 
 	}
-	void dismiss(unsigned int s, unsigned int d, int pos) // isolate this edge from the list, conducted before delete an edge.
+
+    void dismiss(unsigned int s, unsigned int d, int pos) // isolate this edge from the list, conducted before delete an edge.
 	{
 
 		int last_edge_s = edge_table->table[pos].pointers[last_s];
@@ -477,18 +480,16 @@ public:
 		return;
 	}
 
-
-	void update(long long time)  // when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
-		// added into the curresponding cross lists;
-		//time = T-N
+	void update(long long time)  // when the sampled edge expires, delete it and move the candidate edge one rank upper.
+	// Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be added into the curresponding cross lists;
+	//time = T-N
 	{
 		int tsl_pos = edge_table->tsl_head;
+		// tsl_pos: -1 < 0; return
 		if(tsl_pos < 0)
 			return;
 		int pos = tsl_pos % total_size;
-		
 
-			
 		while (edge_table->table[pos].timestamp < time) // expired edges will only appear as sampled edges. 
 		{
 		
@@ -505,9 +506,7 @@ public:
 
 				edge_table->delete_sample(pos); // delete the expired sample;
 
-
 				valid_num[g]--;  // the valid num decreases;
-
 
 				edge_table->table[pos].reset(tmp.vice.s, tmp.vice.d, tmp.vice.priority, tmp.vice.timestamp, tmp.vice.time_list_prev, tmp.vice.time_list_next); // the vice edge is an invalid sample now
 				
@@ -540,7 +539,10 @@ public:
 			}
 			else  // if there is no vice edge
 			{
-				assert(edge_table->table[pos].vice.timestamp<0);
+                if (edge_table->table[pos].vice.timestamp >= 0){
+                    std::cout << edge_table->table[pos].vice.timestamp<< std::endl;
+                }
+                assert(edge_table->table[pos].vice.timestamp<0);
 				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
 				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
 				modify_triangle(old_s, old_d, -1);
@@ -551,7 +553,6 @@ public:
 				edge_table->delete_sample(pos);
 
 			}
-	
 
 			if(tsl_pos<0)
 				break;

@@ -7,14 +7,17 @@ class EdgeTable
 {
 public:
 	int size;
-	int tsl_head, tsl_tail, expiration; // mark the head and the tail of the list. expiration is only used in BPS-sample, namely the baseline method. As in this method there are two kinds
-	// of edges, expired but not double expired edges, and not expired edges. We need a pointer to mark the begin of the not expired edges.
+	int tsl_head, tsl_tail, expiration; // mark the head and the tail of the list.
+	// expiration is only used in BPS-sample, namely the baseline method. As in this method there are two kinds of edges, expired but not double expired edges, and not expired edges. \
+	// We need a pointer to mark the begin of the not expired edges.
 	sample_unit* table;
 
+    // s: 4万~12万
 	EdgeTable(int s)
 	{
-		size = s;
-		table = new sample_unit[s];
+		size = s; // 4万~12万
+        // sample_unit 里面由 candidate_unit(vice)
+		table = new sample_unit[s]; // 4万~12万
 		tsl_head = -1;
 		tsl_tail = -1;
 		expiration = -1;
@@ -24,6 +27,7 @@ public:
 			table[i].vice.reset();
 		}
 	}
+
 	~EdgeTable()
 	{
 		delete[]table;
@@ -49,15 +53,18 @@ public:
 			
 		}
 	}	
-	void replace_sample(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the sample edge at pos with a new edge; 
+
+    void replace_sample(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the sample edge at pos with a new edge;
 	{
 		// the cross list will be changed in the upper level, as node table is needed.
-		int tsl_pos = pos;
+		int tsl_pos = pos; // 34841
 		
 		int prev = table[pos].time_list_prev;
 		int next = table[pos].time_list_next;
-		set_time_list(prev, 1, next);
-		set_time_list(next, 0, prev);
+
+		set_time_list(prev, 1, next); // -1 1 -1
+		set_time_list(next, 0, prev); // -1 0 -1
+
 		if(tsl_head == tsl_pos)
 			tsl_head = next;
 		if(expiration == tsl_pos)
@@ -65,17 +72,20 @@ public:
 		if(tsl_tail == tsl_pos)
 			tsl_tail = prev;  // split this pos from the time list.
 
+        // sample unit* table
+        // s_num: 4822 d_num: 2 p: 0.34361265638734362 time: 0 prev: -1 next:-1
 		table[pos].reset(s_num, d_num, p, time, tsl_tail, -1); // insert the new edge;
 		
-		set_time_list(tsl_tail, 1, tsl_pos);
-		tsl_tail = tsl_pos;
+		set_time_list(tsl_tail, 1, tsl_pos); // -1 1 34841
+		tsl_tail = tsl_pos; // 34841
 		if(tsl_head == -1)
-			tsl_head = tsl_pos;
+			tsl_head = tsl_pos; //34841
 		if(expiration == -1)
-			expiration = tsl_pos;
+			expiration = tsl_pos; //34841
 		// the cross list of the new edge remain to be set by the upper level, as node table is needed.
 	}
-	void replace_vice(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the vice edge at pos with a new edge;
+
+    void replace_vice(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the vice edge at pos with a new edge;
 	{
 		int tsl_pos = pos + size;
 		
@@ -99,7 +109,8 @@ public:
 		if(expiration == -1)
 			expiration = tsl_pos;
 	}
-	void delete_sample(int pos) // delete the sample edge in the pos
+
+    void delete_sample(int pos) // delete the sample edge in the pos
 	{
 		int tsl_pos = pos;
 		
@@ -116,7 +127,8 @@ public:
 			
 		table[pos].reset(); // reset the bucket;
 	}
-	void delete_vice(int pos)
+
+    void delete_vice(int pos)
 	{
 		int tsl_pos = pos + size;
 		
