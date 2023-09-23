@@ -26,7 +26,6 @@ public:
 	BPSsample(int size, int w, int hi)
 	{
 		st = new BPSSampleTable(size);
-		cout << "BPS sample size " << size << endl;
 		window_size = w;
 		current_time = 0;
 		hashindex = hi;
@@ -49,7 +48,7 @@ public:
 		string s_string = my_to_string(s);
 		string d_string = my_to_string(d);
 		string e = s_string + d_string;
-		// 计算哈希值 也就是优先级
+		// 计算哈希值
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000 + 1) / 1000001;
 		// 更新当前时间
 		current_time = time;
@@ -81,7 +80,7 @@ public:
 		sample_prob = (double(sample_num) / total_num) * (double(sample_num - 1) / (total_num - 1)) * (double(sample_num - 2) / (total_num - 2));
 	}
 
-    // 估计全局三角形
+    // 估计全局三角形: 样本图三角形个数/采样概率
 	int count()
 	{
 		//cout <<"tc: "<<st->trcount<<' '<< p << endl;

@@ -21,7 +21,6 @@ int main()
         // WikiTalk: (1449042928 - 985765204) / 24981163 = 18.545
         // Actor: (2521428675 - 1693552096) / 33115812 = 24.999
 
-        // 2百万*平均时间跨度
         int gap = 2000000; // the length of the sliding window
 
         for(int hindex =0;hindex<5; hindex++)	// use different hash functions to carry out multiple groups of 
@@ -60,24 +59,29 @@ int main()
             while(fin>>s>>d>>t)
             {
                 // t0 初始化为 -1，如果t0小于0，t0=t；然后两顶点值各自+1
+                // t0 就是数据集的第一个数据的时间戳
                 if(t0<0) t0 = t;
                 s = s + 1;
                 d = d + 1;
                 // 两顶点数值不同 则 count=0
                 // 否则 继续循环
+                // t - t0 就是得出当前t时刻的数据距离第一个数据相差多少时间，也就是两个时间戳进行相减
                 if (s != d)     count = t - t0;	// use the 
                 else continue;
                 num++;
-                
+
 //            	ac->proceed(s, d, count);
                 bc->proceed(s, d, count);
                 sc->proceed(s, d, count);
                 gc->insert_edge(s,d,count);
-
+                
+                // 当时间戳相差大于等于两倍的时间滑动窗口时并且
                 if (count >= 2*wsize && int(count/checkpoint) > tmp_point)	// whenever the window
-                { // count 大于等于 2倍wsize 且 count/checkpoint 大于 tmp_point
-                    // 0 >= 2 * 3709万 && 0/3709000 > 0
+                {
                     srand((int)time(0));
+                    // tmp_point 从20开始递增+1
+                    // 时间戳相差/checkpoint
+                    cout<<"count:"<<count<<endl;
                     tmp_point = count/checkpoint; // 35574条边 tmp_point: 20 count:74180246 checkpoint: 3709000
 //                    ac->prepare();
                     bc->prepare();
@@ -94,7 +98,6 @@ int main()
                     fout<<endl;
                     //
                     cout<<sample_size<<" check point " << tmp_point << endl;
-                    //cout<<t<<' '<<count<<' '<<num<<endl;
                 }
             }
             fin.close();

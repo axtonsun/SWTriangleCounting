@@ -16,7 +16,7 @@ using namespace std;
 	int edge_count;
 	int node_count;
 	int valid_num;
-	int trcount;
+	int trcount; // 样本图的三角形个数
 	double q_count;
 
  	BPSSampleTable(int s)
@@ -222,6 +222,7 @@ using namespace std;
 		 //  (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size: 哈希函数的下一个的值对size取余
 		 //  pos: 哈希索引对应的位置
 
+		 // 在40000中找到存的位置，例 s:4822 d:2 edge:48222, pos: 34841
 	 	 unsigned int pos = (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size;
 
 		 if (edge_table->table[pos].s == 0 && edge_table->table[pos].d == 0) // no sample edge, then 2 cases: the bucket is empty, or only has test item;
@@ -249,22 +250,27 @@ using namespace std;
 			// 
 			link_list(pos_s, pos_d, pos);
 			
-
+			// vice 是 过期但是没有双重过期的测试边
+			// 如果vice边的时间戳小于 0 (bucket未使用，q_count初始化是 1)
 			if (edge_table->table[pos].vice.timestamp < 0) // if this bucket is unused, the q_count is 1 initially;
 			{
-				 q_count = q_count - 1; 
-				 edge_count++;
-				 valid_num++;
+				// 39999 = 40000 -1
+				q_count = q_count - 1; 
+
+				// 边数+1 有效数+1
+				edge_count++;
+				valid_num++;
 			}
 			else if (p >= edge_table->table[pos].vice.priority) // if p is larger than the test priority, the test priority can be deleted now;
-			{// vice 是 过期但是没有双重过期的测试边
+			{// p 大于等于 vice边的优先级，测试边的优先级可以删除
+
+				// 有效数+1
 				valid_num++;
 				
 				q_count -= 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1); // it used to be the largest priority
 				// 删除
 				edge_table->delete_vice(pos);
 			}
-
 			// vice 边的时间戳 小于 0
 			if (edge_table->table[pos].vice.timestamp < 0)
 			{
@@ -277,16 +283,15 @@ using namespace std;
 		}
 
 		 // if the inserted edge has already shown up and is sampled.
-
-		 // edge_table->table[pos].s == s_num && edge_table->table[pos].d == d_num: 桶中的边与插入的边相同
+		 // 桶中的边与插入的边相同
 		 if (edge_table->table[pos].s == s_num && edge_table->table[pos].d == d_num)
 		 {
-			 edge_table->update_sample(pos, time);
-			 return;
+			// 更新采样边
+			edge_table->update_sample(pos, time);
+			return;
 		 }
 
 		 // else if the sampled edge is in last slice
-
 		if (p >= edge_table->table[pos].priority)// if larger than the sampled p, replace it;
 		{
 			// replace the sample edge
@@ -359,7 +364,8 @@ using namespace std;
 		 return;
 	 }
 	
-	// when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
+	// when the sampled edge expires, delete it and move the candidate edge one rank upper. 
+	// Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
 	// added into the curresponding cross lists;
 	void update(long long ex_time, long long de_time)  
 	{
