@@ -107,6 +107,7 @@ using namespace std;
 		return;
 	}
 
+	// 
 	void link_list(sample_node* pos_s, sample_node* pos_d, int pos)
 	{
 		unsigned int s_num = pos_s->nodeID;
@@ -200,23 +201,44 @@ using namespace std;
 				edge_table->table[next_edge_d].set_last_s(last_edge_d);
 		}
 	}
-	 void insert(unsigned int s_num, unsigned int d_num, double p, long long time, int hashindex)
-	 {
+	
+	void insert(unsigned int s_num, unsigned int d_num, double p, long long time, int hashindex)
+	{
+		// 两顶点转换并拼接成字符串
 		 string s = my_to_string(s_num);
 		 string d = my_to_string(d_num);
 		 string edge = s + d;
+
+		 // if the inserted edge is not sampled before, then insert it into the table;
+		 // if the inserted edge is sampled before, then compare the priority with the sampled priority, if larger, replace it;
+
+		 // if the inserted edge is sampled before, then compare the priority with the test priority, if larger, replace it;
+		 // if the inserted edge is sampled before, then compare the priority with the test priority, if smaller, do nothing;
+		 // if the inserted edge is sampled before, then compare the priority with the test priority, if equal, do nothing;
+
+		 // edge.c_str(), edge.length(): 字符串转换为字符数组，长度
+		
+		 //  (*hfunc[hashindex+1]): 哈希函数的下一个的值
+		 //  (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size: 哈希函数的下一个的值对size取余
+		 //  pos: 哈希索引对应的位置
+
 	 	 unsigned int pos = (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size;
 
 		 if (edge_table->table[pos].s == 0 && edge_table->table[pos].d == 0) // no sample edge, then 2 cases: the bucket is empty, or only has test item;
 		 {
-			 edge_table->replace_sample(s_num, d_num, p, time, pos);
 
-			 sample_node* pos_s = node_table->ID_to_pos(s_num);
-			 sample_node* pos_d = node_table->ID_to_pos(d_num);
+			// 用一个 新的边 替换一个 样本边
+			 edge_table->replace_sample(s_num, d_num, p, time, pos);
+			// 在一个哈希表中查找与给定节点ID相匹配的节点，并返回其位置
+			// 如果在哈希表中找不到匹配的节点，就返回NULL
+			sample_node* pos_s = node_table->ID_to_pos(s_num);
+			sample_node* pos_d = node_table->ID_to_pos(d_num);
+			// 返回NULL 进入条件语句
 			 if (!pos_s)
 			 {
-				 pos_s = node_table->insert(s_num);
-				 node_count++;
+				// 节点表插入点
+				pos_s = node_table->insert(s_num);
+				node_count++;
 			 }
 			 if (!pos_d)
 			 {
@@ -224,32 +246,39 @@ using namespace std;
 				 node_count++;
 			 }
 
-			 link_list(pos_s, pos_d, pos);
+			// 
+			link_list(pos_s, pos_d, pos);
 			
-			 if (edge_table->table[pos].vice.timestamp < 0) // if this bucket is unused, the q_count is 1 initially;
-			 {
+
+			if (edge_table->table[pos].vice.timestamp < 0) // if this bucket is unused, the q_count is 1 initially;
+			{
 				 q_count = q_count - 1; 
 				 edge_count++;
 				 valid_num++;
-			 }
-			 else if (p >= edge_table->table[pos].vice.priority) // if p is larger than the test priority, the test priority can be deleted now;
-			 {
-				 valid_num++;
-				 q_count -= 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1); // it used to be the largest priority
-				 edge_table->delete_vice(pos);
-			 }
+			}
+			else if (p >= edge_table->table[pos].vice.priority) // if p is larger than the test priority, the test priority can be deleted now;
+			{// vice 是 过期但是没有双重过期的测试边
+				valid_num++;
+				
+				q_count -= 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1); // it used to be the largest priority
+				// 删除
+				edge_table->delete_vice(pos);
+			}
 
-			 if (edge_table->table[pos].vice.timestamp < 0)
-			 {
-				 modify_triangle(pos_s, pos_d, 1);
-				 q_count += 1/pow(2, int(-(log(1 - p) / log(2)))+1);
-			 }
+			// vice 边的时间戳 小于 0
+			if (edge_table->table[pos].vice.timestamp < 0)
+			{
+				// 修改三角形
+				modify_triangle(pos_s, pos_d, 1);
+				q_count += 1/pow(2, int(-(log(1 - p) / log(2)))+1);
+			}
 
 			return;
 		}
 
 		 // if the inserted edge has already shown up and is sampled.
 
+		 // edge_table->table[pos].s == s_num && edge_table->table[pos].d == d_num: 桶中的边与插入的边相同
 		 if (edge_table->table[pos].s == s_num && edge_table->table[pos].d == d_num)
 		 {
 			 edge_table->update_sample(pos, time);
@@ -260,8 +289,6 @@ using namespace std;
 
 		if (p >= edge_table->table[pos].priority)// if larger than the sampled p, replace it;
 		{
-
-
 			// replace the sample edge
 			sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
 			sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
@@ -331,9 +358,11 @@ using namespace std;
 		   // if smaller than the sampled p£¬ nothing need to be done;
 		 return;
 	 }
-	 void update(long long ex_time, long long de_time)  // when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
-		 // added into the curresponding cross lists;
-	 {
+	
+	// when the sampled edge expires, delete it and move the candidate edge one rank upper. Before this function the cross lists including this pos should be changed, and after this function the new sampled edge (valid or not) should be 
+	// added into the curresponding cross lists;
+	void update(long long ex_time, long long de_time)  
+	{
 		 if (edge_table->expiration==-1)
 			 return;
 		 int tsl_pos = edge_table->expiration;
@@ -405,7 +434,6 @@ using namespace std;
 				pos = tsl_pos % size;
 		}
 	}
-
 	 
  };
  

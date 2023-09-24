@@ -21,8 +21,8 @@ int main()
         // WikiTalk: (1449042928 - 985765204) / 24981163 = 18.545
         // Actor: (2521428675 - 1693552096) / 33115812 = 24.999
 
+        // 2百万*平均时间跨度
         int gap = 2000000; // the length of the sliding window
-        // 滑动窗口长度设置为2百万
 
         for(int hindex =0;hindex<5; hindex++)	// use different hash functions to carry out multiple groups of 
         {//使用不同哈希函数执行多组操作 hindex从0到4
@@ -44,7 +44,7 @@ int main()
             ofstream fout(index.c_str());
 
             // sample_size: 4万~12万 wsize: 3709万 / 755万 hindex: 0~4
-//            asy_sample* ac = new asy_sample(sample_size, wsize,10, hindex);
+            // asy_sample* ac = new asy_sample(sample_size, wsize,10, hindex);
             BPSsample* bc = new BPSsample(sample_size, wsize, hindex);
             sample* sc = new sample(sample_size, wsize, hindex);
             GoldenCounter* gc = new GoldenCounter(wsize);
@@ -56,9 +56,9 @@ int main()
             int checkpoint = wsize/10;
             int num = 0;
 
+            // 从输入流中读取数据到变量s,d,t
             while(fin>>s>>d>>t)
-            {//从输入流中读取数据到变量s,d,t
-
+            {
                 // t0 初始化为 -1，如果t0小于0，t0=t；然后两顶点值各自+1
                 if(t0<0) t0 = t;
                 s = s + 1;

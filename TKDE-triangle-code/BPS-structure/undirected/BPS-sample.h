@@ -26,6 +26,7 @@ public:
 	BPSsample(int size, int w, int hi)
 	{
 		st = new BPSSampleTable(size);
+		cout << "BPS sample size " << size << endl;
 		window_size = w;
 		current_time = 0;
 		hashindex = hi;
@@ -44,13 +45,25 @@ public:
 			s = d;
 			d = tmp;
 		}
+		// 两个顶点转换并拼接成字符串
 		string s_string = my_to_string(s);
 		string d_string = my_to_string(d);
 		string e = s_string + d_string;
+		// 计算哈希值 也就是优先级
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000 + 1) / 1000001;
+		// 更新当前时间
 		current_time = time;
+		// 更新滑动窗口
+		// time: 当前时间
+		// time-window_size: 当前时间减去窗口大小
+		// time-2*window_size: 当前时间减去两倍窗口大小
 		st->update(time-window_size, time-2*window_size);
-		//if(time>44000000) cout<<" BPS update finished"<<endl;
+		// 插入新边
+		// s: 顶点1
+		// d: 顶点2
+		// p: 概率
+		// time: 当前时间
+		// hashindex: 哈希索引
 		st->insert(s, d, p, time, hashindex);
 	}
 

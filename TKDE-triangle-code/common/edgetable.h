@@ -54,6 +54,7 @@ public:
 		}
 	}	
 
+	// 用一个新的边替换一个样本边
     void replace_sample(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the sample edge at pos with a new edge;
 	{
 		// the cross list will be changed in the upper level, as node table is needed.

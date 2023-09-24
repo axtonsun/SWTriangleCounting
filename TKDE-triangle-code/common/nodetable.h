@@ -203,7 +203,7 @@ int NodeTable::get_edge(unsigned long node)
 	return -1;
 }
 
-// 在一个哈希表中查找与给定节点ID相匹配的节点，并返回其位置。如果在哈希表中找不到匹配的节点，就返回NULL。
+// 在一个哈希表中查找与给定节点ID相匹配的节点，并返回其位置。如果在哈希表中找不到匹配的节点，就返回NULL
 sample_node* NodeTable::ID_to_pos(unsigned long node)
 {
 	// node:4822 node_s:"4822"
