@@ -91,8 +91,9 @@ class sample_node
 	 unsigned int s, d; // nodes of the edge
 	 double priority; // can be computed according to s and d. saved only for convinience
 	 long long timestamp;// 时间戳(长整型)
-	 int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
-	 //A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
+	 int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. 
+	 // A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
+	 // A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
 	 int time_list_next; // 在时间列表中后一个元素位置指针
 
      candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)

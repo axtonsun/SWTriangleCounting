@@ -8,7 +8,8 @@ class EdgeTable
 public:
 	int size;
 	int tsl_head, tsl_tail, expiration; // mark the head and the tail of the list.
-	// expiration is only used in BPS-sample, namely the baseline method. As in this method there are two kinds of edges, expired but not double expired edges, and not expired edges. \
+	// expiration is only used in BPS-sample, namely the baseline method. 
+	// As in this method there are two kinds of edges, expired but not double expired edges, and not expired edges.
 	// We need a pointer to mark the begin of the not expired edges.
 	sample_unit* table;
 
@@ -35,9 +36,9 @@ public:
 	
 	void set_time_list(int pos, int type, int aim) // type == 0 means prev pointer, and type == 1 means next pointer
  	{
- 		if(pos==-1)
+ 		if(pos == -1)
 		 	return; 
- 		if(pos<size) // set the time list pointer of sample unit at the corresponding pos 
+ 		if(pos < size) // set the time list pointer of sample unit at the corresponding pos 
 		{
 			if(type==0)
 				table[pos].time_list_prev = aim;
@@ -78,6 +79,7 @@ public:
 		table[pos].reset(s_num, d_num, p, time, tsl_tail, -1); // insert the new edge;
 		
 		set_time_list(tsl_tail, 1, tsl_pos); // -1 1 34841
+		
 		tsl_tail = tsl_pos; // 34841
 		if(tsl_head == -1)
 			tsl_head = tsl_pos; //34841

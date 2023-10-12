@@ -42,7 +42,7 @@ int main()
             index += my_to_string(sample_size/20000);
             ofstream fout(index.c_str());
 
-            // sample_size: 4万~12万 wsize: 3709万 / 755万 hindex: 0~4
+            // sample_size: 4万~12万 wsize: 时间型滑动窗口 3709万 / 755万 hindex: 0~4
             // asy_sample* ac = new asy_sample(sample_size, wsize,10, hindex);
             BPSsample* bc = new BPSsample(sample_size, wsize, hindex);
             sample* sc = new sample(sample_size, wsize, hindex);
@@ -66,7 +66,7 @@ int main()
                 // 两顶点数值不同 则 count=0
                 // 否则 继续循环
                 // t - t0 就是得出当前t时刻的数据距离第一个数据相差多少时间，也就是两个时间戳进行相减
-                if (s != d)     count = t - t0;	// use the 
+                if (s != d)     count = t - t0;	// use the timestamp as the time unit
                 else continue;
                 num++;
 
@@ -81,7 +81,6 @@ int main()
                     srand((int)time(0));
                     // tmp_point 从20开始递增+1
                     // 时间戳相差/checkpoint
-                    cout<<"count:"<<count<<endl;
                     tmp_point = count/checkpoint; // 35574条边 tmp_point: 20 count:74180246 checkpoint: 3709000
 //                    ac->prepare();
                     bc->prepare();

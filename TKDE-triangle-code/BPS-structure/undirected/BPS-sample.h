@@ -48,7 +48,10 @@ public:
 		string s_string = my_to_string(s);
 		string d_string = my_to_string(d);
 		string e = s_string + d_string;
-		// 计算哈希值
+		// 计算边的优先级
+		// % 1000000 + 1: 取模
+		// / 1000001: 归一化
+		// p: 0.34361265638734362 / 0.045699954300045698
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000 + 1) / 1000001;
 		// 更新当前时间
 		current_time = time;
@@ -60,7 +63,7 @@ public:
 		// 插入新边
 		// s: 顶点1
 		// d: 顶点2
-		// p: 概率
+		// p: 边的优先级
 		// time: 当前时间
 		// hashindex: 哈希索引
 		st->insert(s, d, p, time, hashindex);

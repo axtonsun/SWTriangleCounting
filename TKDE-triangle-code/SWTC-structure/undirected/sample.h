@@ -63,15 +63,18 @@ public:
 		string e = s_string + d_string;
 
 		// p: 0.34361265638734362
+		// 计算边的优先级
 		double p = double((*hfunc[hashindex])((const unsigned char*)e.c_str(), e.length()) % 1000000+1) / 1000001;
 
 		// time:0
 		current_time = time;
 
         // -3709万 = time-window_size land_mark:0 last_mark:0
+		// 时间-窗口大小，路标，上一个路标
 		st->update(time-window_size, land_mark, last_mark);
 
 		// 0-0 >= 3709万
+		// 时间 - 路标 大于等于 窗口大小
 		if (time - land_mark >= window_size)
 		{
 			assert(time - land_mark < 2*window_size);
