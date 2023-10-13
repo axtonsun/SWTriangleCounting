@@ -722,87 +722,113 @@ class SampleTable
     // Before this function the cross lists including this pos should be changed,
     // and after this function the new sampled edge (valid or not) should be added into the curresponding cross lists;
     void update(long long time, long long land_mark, long long last_mark)
-	 {
+	{
+		// time(这里的time是当前时间-滑动窗口大小): time - window-size
+
 		int tsl_pos = edge_table->tsl_head;
 		// -1 < 0 return
 		if(tsl_pos < 0)
 			return;
 		int pos = tsl_pos % size;
 		
-		 while (edge_table->table[pos].timestamp < time)
-		 {
-			 tsl_pos = edge_table->table[pos].time_list_next;
+		cout<<time<<' '<<land_mark<<' '<<last_mark<<' '<<pos<<endl;
 
-			 if (edge_table->table[pos].vice.timestamp < last_mark && edge_table->table[pos].vice.timestamp >= 0)  // if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned. 
-				 edge_table->table[pos].vice.reset();
-			
-			 if(edge_table->table[pos].vice.timestamp>=time)
-			 {
-				 illusion_q = illusion_q - 1 + 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1);
-
-				 sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
-				 sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
-				 modify_triangle(old_s, old_d, last_mark, -1);
-				 dismiss(old_s, old_d, pos);
-				 sample_unit tmp = edge_table->table[pos];
+		if (time == land_mark)
+		{
+			cout<<time<<' ' <<land_mark <<endl
+		}
 		
-				 edge_table->delete_sample(pos); // delete the expired sample;
 
+		// 只要边表位置pos处的时间戳 小于 给定的time，就一直循环
+		// 即: 上一个切片中的边，如果在当前切片中已经过期，就一直循环
+		// 13340376 < 13341073		
+		while (edge_table->table[pos].timestamp < time)
+		{
+			// == 22004443 22043552
+			// ++ 22011792 22043552
+			cout<<"edge_table->table[pos].timestamp: "<<edge_table->table[pos].timestamp<<' '<<time<<endl;
+			cout<<edge_table->table[pos].s<<' '<<edge_table->table[pos].d<<' '<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].timestamp<<endl;
 
-				 valid_num--;  // the valid num decreases, but the illusion_valid do not decrease, as after the land mark this bucket will still be valid;
+			tsl_pos = edge_table->table[pos].time_list_next;
 
-
-				 edge_table->table[pos].reset(tmp.vice.s, tmp.vice.d, tmp.vice.priority, tmp.vice.timestamp, tmp.vice.time_list_prev, tmp.vice.time_list_next); // the vice edge is an invalid sample now
-				 
-				 edge_table->set_time_list(tmp.vice.time_list_prev, 1, pos);
-				 edge_table->set_time_list(tmp.vice.time_list_next, 0, pos); // the pointer used to be pos + total_size (candidate unit), now updated to pos (sample unit); 
-				 if(edge_table->tsl_tail == pos + size)
-					edge_table->tsl_tail = pos;
-				 if(edge_table->tsl_head == pos + size)
-					edge_table->tsl_head = pos; 
-				 
+			cout<<"edge_table->table[pos].vice.timestamp: " << edge_table->table[pos].vice.timestamp <<' '<< last_mark <<endl;
+			// if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned. 
+			// == -1 0
+			// ++ 42047960 last_mark: 0
+			if (edge_table->table[pos].vice.timestamp < last_mark && edge_table->table[pos].vice.timestamp >= 0)
+				edge_table->table[pos].vice.reset();
+			
+			// vice edge 是 old->new 之间的边(case 2: 过期并作为测试(候选)边) / 当前切片中具有最高优先级的边
+			if(edge_table->table[pos].vice.timestamp >= time)
+			{
+				// ++ 42047960 22043552
+				cout<<">="<<"edge_table->table[pos].vice.timestamp: "<<edge_table->table[pos].vice.timestamp<<' '<<time<<endl;
+				cout<<">="<<edge_table->table[pos].vice.s<<' '<<edge_table->table[pos].vice.d<<' '<<edge_table->table[pos].vice.priority<<' '<<edge_table->table[pos].vice.timestamp<<endl;
 				
-				 sample_node* pos_s = node_table->ID_to_pos(tmp.vice.s);
-				 sample_node* pos_d = node_table->ID_to_pos(tmp.vice.d);
-				 if (!pos_s)
-				 {
-					 pos_s = node_table->insert(tmp.vice.s);
-					 node_count++;
-				 }
-				 if (!pos_d)
-				 {
-					 pos_d = node_table->insert(tmp.vice.d);
-					 node_count++;
-				 }					// if the node is not in the table ,insert it
+				illusion_q = illusion_q - 1 + 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1);
 
-				 link_list(pos_s, pos_d, pos, tmp.vice.s, tmp.vice.d); // link the cross list;
-				 modify_illusion(pos_s, pos_d, land_mark, 1); // the inserted is invalid, therefore only the illusion is increased;
-				 illusion_valid++;
+				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
+				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
+				modify_triangle(old_s, old_d, last_mark, -1);
+				dismiss(old_s, old_d, pos);
+				sample_unit tmp = edge_table->table[pos];
+	
+				edge_table->delete_sample(pos); // delete the expired sample;
 
+				valid_num--;  // the valid num decreases, but the illusion_valid do not decrease, as after the land mark this bucket will still be valid;
+
+				edge_table->table[pos].reset(tmp.vice.s, tmp.vice.d, tmp.vice.priority, tmp.vice.timestamp, tmp.vice.time_list_prev, tmp.vice.time_list_next); // the vice edge is an invalid sample now
 				
-				 edge_table->table[pos].vice.reset(tmp.s, tmp.d, tmp.priority, tmp.timestamp);
-			 }
-			 else  // if there is no vice edge
-			 {
-				 sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
-				 sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
-				 modify_triangle(old_s, old_d, last_mark, -1);
-				 dismiss(old_s, old_d, pos);
-				 valid_num--;
+				edge_table->set_time_list(tmp.vice.time_list_prev, 1, pos);
+				edge_table->set_time_list(tmp.vice.time_list_next, 0, pos); // the pointer used to be pos + total_size (candidate unit), now updated to pos (sample unit); 
+				if(edge_table->tsl_tail == pos + size)
+				edge_table->tsl_tail = pos;
+				if(edge_table->tsl_head == pos + size)
+				edge_table->tsl_head = pos; 
+				
+				sample_node* pos_s = node_table->ID_to_pos(tmp.vice.s);
+				sample_node* pos_d = node_table->ID_to_pos(tmp.vice.d);
+				if (!pos_s)
+				{
+					pos_s = node_table->insert(tmp.vice.s);
+					node_count++;
+				}
+				if (!pos_d)
+				{
+					pos_d = node_table->insert(tmp.vice.d);
+					node_count++;
+				}					// if the node is not in the table ,insert it
 
-				 edge_table->table[pos].vice.reset(edge_table->table[pos].s, edge_table->table[pos].d, edge_table->table[pos].priority, edge_table->table[pos].timestamp);
-				 
+				link_list(pos_s, pos_d, pos, tmp.vice.s, tmp.vice.d); // link the cross list;
+				modify_illusion(pos_s, pos_d, land_mark, 1); // the inserted is invalid, therefore only the illusion is increased;
+				illusion_valid++;
+			
+				edge_table->table[pos].vice.reset(tmp.s, tmp.d, tmp.priority, tmp.timestamp);
+			}
+			else  // if there is no vice edge
+			{
+				// -1 13341073
+				//==  -1 22043552
+				cout<<"else "<<"edge_table->table[pos].vice.timestamp: "<<edge_table->table[pos].vice.timestamp<<' '<<time<<endl;
+				cout<<"else "<<edge_table->table[pos].vice.s<<' '<<edge_table->table[pos].vice.d<<' '<<edge_table->table[pos].vice.priority<<' '<<edge_table->table[pos].vice.timestamp<<endl;
 
-				 edge_table->delete_sample(pos);
+				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
+				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
+				modify_triangle(old_s, old_d, last_mark, -1);
+				dismiss(old_s, old_d, pos);
+				valid_num--;
 
-			 }
+				edge_table->table[pos].vice.reset(edge_table->table[pos].s, edge_table->table[pos].d, edge_table->table[pos].priority, edge_table->table[pos].timestamp);
+				
+				edge_table->delete_sample(pos);
+
+			}
 
 			if(tsl_pos<0)
 				break;
 			pos = tsl_pos % size;	
-
-		 }
-	 }
+		}
+	}
 
 	void ective()
 	 {
@@ -810,9 +836,11 @@ class SampleTable
 		 valid_num = illusion_valid;
 		 q_count = illusion_q;
 		 edge_count = illusion_valid; 
+
 		 illusion_q = size;
 		 illusion_valid = 0;
 		 illusion = 0;
+		 
 		 node_table->active();
 	 }
 

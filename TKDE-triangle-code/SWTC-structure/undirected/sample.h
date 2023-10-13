@@ -73,15 +73,16 @@ public:
 		// 时间-窗口大小，路标，上一个路标
 		st->update(time-window_size, land_mark, last_mark);
 
-		// 0-0 >= 3709万
+		// 路标切换
 		// 时间 - 路标 大于等于 窗口大小
 		if (time - land_mark >= window_size)
 		{
+			// 时间 - 路标 小于 2倍窗口大小 才不会出错
 			assert(time - land_mark < 2*window_size);
 			last_mark = land_mark;
 			land_mark = land_mark + window_size;
 			st->ective();
-		//	cout << time << ' '<<land_mark<<" effected" << endl;
+			// cout << time << ' '<<land_mark<<" effected " << window_size << endl;
 		}
 
 		// 4822->2
