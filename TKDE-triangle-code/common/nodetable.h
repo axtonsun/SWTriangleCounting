@@ -70,7 +70,7 @@ public:
 };
 
 
-sample_node* NodeTable::insert(unsigned long node, int edge) // ndoe:4822 edge:-1
+sample_node* NodeTable::insert(unsigned long node, int edge) // node:4822 edge:-1 / node:2 edge:-1
 {
 	int min_length = 0x7FFFFFFF;// 2147483647
 	int min_pos = -1;
@@ -120,12 +120,13 @@ sample_node* NodeTable::insert(unsigned long node, int edge) // ndoe:4822 edge:-
 		}
 	}
 
-	if (empty_pos>=0) // 5775 >= 0
+	if (empty_pos>=0) // s:empty_pos 5775 >= 0 / d:empty_pos 9530 >= 0
 	{
 		table[empty_pos].nodeID = node;
 		table[empty_pos].set_first_edge(edge); //edge: -1
         return &(table[empty_pos]);
 	}
+
 	sample_node* tmp = table[min_pos].next;
 	if (!tmp)
 	{

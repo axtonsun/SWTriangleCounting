@@ -43,6 +43,7 @@ using namespace std;
 		vector<unsigned int> v2;
 		unsigned int s_num = pos_s->nodeID;
 		unsigned int d_num = pos_d->nodeID;
+		// edge_s: 34841 edge_d: 34841
 		int edge_s = pos_s->first_edge;
 		int edge_d = pos_d->first_edge;
 		bool print = false;
@@ -50,10 +51,11 @@ using namespace std;
 		{
 			unsigned int tmp;
 			int next_index;
+			// edge_table->table[edge_s].s: 4822 s_num: 4822
 			if (edge_table->table[edge_s].s == s_num)
 			{
 				tmp = edge_table->table[edge_s].d;
-				next_index = edge_table->table[edge_s].pointers[last_s];
+				next_index = edge_table->table[edge_s].pointers[last_s]; // next_index: -1
 			}
 			else if (edge_table->table[edge_s].d == s_num)
 			{
@@ -61,9 +63,11 @@ using namespace std;
 				next_index = edge_table->table[edge_s].pointers[last_d];
 			}
 
-			if (edge_table->table[edge_s].vice.timestamp<0)  // only count the valid edge
+			if (edge_table->table[edge_s].vice.timestamp < 0)  // only count the valid edge
+			{
 				v1.push_back(tmp);
-			edge_s = next_index;
+			}	
+			edge_s = next_index; // edge_s: -1
 		}
 				
 		while (edge_d >= 0)
@@ -71,7 +75,7 @@ using namespace std;
 		
 			unsigned int tmp;
 			int next_index;
-			if(print) cout<<edge_d<<' '<<edge_table->table[edge_d].s<<' '<<edge_table->table[edge_d].d<<endl;
+			if(print) cout<<edge_d<<' '<<edge_table->table[edge_d].s<<' '<<edge_table->table[edge_d].d<<endl;			// edge_table->table[edge_d].d: 2 d_num: 2
 			if (edge_table->table[edge_d].d == d_num)
 			{
 				tmp = edge_table->table[edge_d].s;
@@ -90,14 +94,16 @@ using namespace std;
 			edge_d = next_index;
 		}
 		std::vector<unsigned int> cn;
-		 count_join(v1, v2, cn);
-		 for(int i=0;i<cn.size();i++)
-		 {
-		 	pos_s->local_count += op;
-		 	pos_d->local_count += op;
-		 	trcount += op;
-		 	(node_table->ID_to_pos(cn[i]))->local_count += op;
-		 }
+		count_join(v1, v2, cn);
+		
+		for(int i=0;i<cn.size();i++)
+		{
+		pos_s->local_count += op;
+		pos_d->local_count += op;
+		trcount += op;
+		(node_table->ID_to_pos(cn[i]))->local_count += op;
+		}
+		
 		v1.clear();
 		vector<unsigned int>().swap(v1);
 		v2.clear();
@@ -119,6 +125,7 @@ using namespace std;
 		edge_table->table[pos].set_last_d(pos_d->first_edge);
 
 		// 检查源节点是否已经有边连接
+		// -1 >= 0
 		if (pos_s->first_edge >= 0)
 		{
 			// 如果有，则检查源节点的第一条边是否具有与 s_num 相同的源节点ID
@@ -129,6 +136,7 @@ using namespace std;
 		}
 
 		// 检查目标节点是否已经有边连接
+		// -1 >= 0
 		if (pos_d->first_edge >= 0)
 		{
 			if (edge_table->table[pos_d->first_edge].s == d_num)
@@ -138,6 +146,8 @@ using namespace std;
 		}
 
 		// 将s节点和d节点都设置为第一条边，从而有效地连接这两个节点
+		// pos_s:(nodeID:4822 local_count:0 vision_count:0 first_edge:34841 next:0x0)
+		// pos_d:(nodeID:2 local_count:0 vision_count:0 first_edge:34841 next:0x0)
 		pos_s->set_first_edge(pos);
 		pos_d->set_first_edge(pos);			// set the cross list;
 
@@ -258,7 +268,11 @@ using namespace std;
 				 pos_d = node_table->insert(d_num);
 				 node_count++;
 			}
+			// node_count:2 +1(s:4822) +1(d:2)
 
+			// pos_s:(nodeID:4822 local_count:0 vision_count:0 first_edge:-1 next:0x0)
+			// pos_d:(nodeID:2 local_count:0 vision_count:0 first_edge:-1 next:0x0)
+			// pos:34841
 			link_list(pos_s, pos_d, pos);
 			
 			// vice 是 过期但是没有双重过期的测试边
@@ -286,6 +300,8 @@ using namespace std;
 			if (edge_table->table[pos].vice.timestamp < 0)
 			{
 				// 修改三角形
+				// pos_s:(nodeID:4822 local_count:0 vision_count:0 first_edge:34841 next:0x0)
+				// pos_d:(nodeID:2 local_count:0 vision_count:0 first_edge:34841 next:0x0)
 				modify_triangle(pos_s, pos_d, 1);
 				q_count += 1/pow(2, int(-(log(1 - p) / log(2)))+1);
 			}

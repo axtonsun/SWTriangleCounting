@@ -471,8 +471,7 @@ class SampleTable
          unsigned int pos = (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size;
 
 		 // if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned.
-		 // 如果副边比最后一个标记要晚，那么它是一个左测试边缘，并且需要清理
-		 // vice边的时间戳 < last_mark 并且 vice边的时间戳 >= 0
+		 // 如果vice边比上一个标记要晚，那么它是一个左测试边，并且需要清理
 		 // -1 < 0 && -1 >=0
 		 if (edge_table->table[pos].vice.timestamp < last_mark && edge_table->table[pos].vice.timestamp>=0)
 			 edge_table->table[pos].vice.reset();
@@ -725,46 +724,37 @@ class SampleTable
 	{
 		// time(这里的time是当前时间-滑动窗口大小): time - window-size
 
+		cout<<"+ "<<edge_table->tsl_head<<' '<<edge_table->tsl_tail<<endl;
+
 		int tsl_pos = edge_table->tsl_head;
 		// -1 < 0 return
 		if(tsl_pos < 0)
 			return;
 		int pos = tsl_pos % size;
 		
-		cout<<time<<' '<<land_mark<<' '<<last_mark<<' '<<pos<<endl;
+		cout<<"++ "<<edge_table->table[pos].timestamp<<' '<<time<<' '<<edge_table->table[pos].vice.timestamp<<' '<<land_mark<<' '<< last_mark<<endl;
+		cout<<"++ "<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].vice.priority<<endl;
 
-		if (time == land_mark)
-		{
-			cout<<time<<' ' <<land_mark <<endl
-		}
-		
-
-		// 只要边表位置pos处的时间戳 小于 给定的time，就一直循环
-		// 即: 上一个切片中的边，如果在当前切片中已经过期，就一直循环
-		// 13340376 < 13341073		
+		// 只要边表位置pos处的时间戳 小于 time(当前时间(T)-滑动窗口(W))，就一直循环
 		while (edge_table->table[pos].timestamp < time)
 		{
-			// == 22004443 22043552
-			// ++ 22011792 22043552
-			cout<<"edge_table->table[pos].timestamp: "<<edge_table->table[pos].timestamp<<' '<<time<<endl;
-			cout<<edge_table->table[pos].s<<' '<<edge_table->table[pos].d<<' '<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].timestamp<<endl;
 
 			tsl_pos = edge_table->table[pos].time_list_next;
 
-			cout<<"edge_table->table[pos].vice.timestamp: " << edge_table->table[pos].vice.timestamp <<' '<< last_mark <<endl;
-			// if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned. 
-			// == -1 0
-			// ++ 42047960 last_mark: 0
+			cout<<"== while "<<edge_table->table[pos].timestamp<<' '<<time<<' '<<edge_table->table[pos].vice.timestamp<<' '<<land_mark<<' '<< last_mark<<endl;
+			cout<<"== while "<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].vice.priority<<endl;
+
+			// if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned.
+			// 如果 vice边 比上一个标记要 晚，那么它是一个左测试边，并且需要清理
 			if (edge_table->table[pos].vice.timestamp < last_mark && edge_table->table[pos].vice.timestamp >= 0)
 				edge_table->table[pos].vice.reset();
 			
 			// vice edge 是 old->new 之间的边(case 2: 过期并作为测试(候选)边) / 当前切片中具有最高优先级的边
 			if(edge_table->table[pos].vice.timestamp >= time)
 			{
-				// ++ 42047960 22043552
-				cout<<">="<<"edge_table->table[pos].vice.timestamp: "<<edge_table->table[pos].vice.timestamp<<' '<<time<<endl;
-				cout<<">="<<edge_table->table[pos].vice.s<<' '<<edge_table->table[pos].vice.d<<' '<<edge_table->table[pos].vice.priority<<' '<<edge_table->table[pos].vice.timestamp<<endl;
-				
+				cout<<"== if"<<edge_table->table[pos].timestamp<<' '<<time<<' '<<edge_table->table[pos].vice.timestamp<<' '<<land_mark<<' '<< last_mark<<endl;
+				cout<<"== if"<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].vice.priority<<endl;
+
 				illusion_q = illusion_q - 1 + 1/pow(2, int(-(log(1 - edge_table->table[pos].vice.priority) / log(2)))+1);
 
 				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
@@ -797,7 +787,7 @@ class SampleTable
 				{
 					pos_d = node_table->insert(tmp.vice.d);
 					node_count++;
-				}					// if the node is not in the table ,insert it
+				}	// if the node is not in the table ,insert it
 
 				link_list(pos_s, pos_d, pos, tmp.vice.s, tmp.vice.d); // link the cross list;
 				modify_illusion(pos_s, pos_d, land_mark, 1); // the inserted is invalid, therefore only the illusion is increased;
@@ -807,11 +797,9 @@ class SampleTable
 			}
 			else  // if there is no vice edge
 			{
-				// -1 13341073
-				//==  -1 22043552
-				cout<<"else "<<"edge_table->table[pos].vice.timestamp: "<<edge_table->table[pos].vice.timestamp<<' '<<time<<endl;
-				cout<<"else "<<edge_table->table[pos].vice.s<<' '<<edge_table->table[pos].vice.d<<' '<<edge_table->table[pos].vice.priority<<' '<<edge_table->table[pos].vice.timestamp<<endl;
-
+				cout<<"== else"<<edge_table->table[pos].timestamp<<' '<<time<<' '<<edge_table->table[pos].vice.timestamp<<' '<<land_mark<<' '<< last_mark<<endl;
+				cout<<"== else"<<edge_table->table[pos].priority<<' '<<edge_table->table[pos].vice.priority<<endl;
+				
 				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
 				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
 				modify_triangle(old_s, old_d, last_mark, -1);

@@ -75,7 +75,7 @@ int main()
                 sc->proceed(s, d, count);
                 gc->insert_edge(s,d,count);
                 
-                // 当时间戳相差大于等于两倍的时间滑动窗口时并且
+                // 当时间戳相差大于等于两倍的时间滑动窗口时并且count/checkpoint大于tmp_point
                 if (count >= 2*wsize && int(count/checkpoint) > tmp_point)	// whenever the window
                 {
                     srand((int)time(0));
