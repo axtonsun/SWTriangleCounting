@@ -119,7 +119,7 @@ sample_node* NodeTable::insert(unsigned long node, int edge) // node:4822 edge:-
 		}
 	}
 
-	if (empty_pos>=0) // s:empty_pos 5775 >= 0 / d:empty_pos 9530 >= 0
+	if (empty_pos >= 0) // s:empty_pos 5775 >= 0 / d:empty_pos 9530 >= 0
 	{
 		table[empty_pos].nodeID = node;
 		table[empty_pos].set_first_edge(edge); //edge: -1

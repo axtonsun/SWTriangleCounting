@@ -70,13 +70,13 @@ int main()
                     sc->proceed(s, d, count);
                     gc->insert_edge(s,d,count);
                     
-                    // 当时间戳相差大于等于两倍的时间滑动窗口时并且count/checkpoint大于tmp_point
+                    // 当时间戳相差 大于等于 两倍时间滑动窗口 && count/checkpoint 大于 tmp_point
                     if (count >= 2*wsize && int(count/checkpoint) > tmp_point)	// whenever the window
                     {
                         srand((int)time(0));
                         // tmp_point 从20开始递增+1
                         // 时间戳相差/checkpoint
-                        tmp_point = count/checkpoint; // 35574条边 tmp_point: 20 count:74180246 checkpoint: 3709000
+                        tmp_point = count/checkpoint; // tmp_point: 20 count:74180246 checkpoint: 3709000
                         // ac->prepare();
                         bc->prepare();
                         sc->prepare();
