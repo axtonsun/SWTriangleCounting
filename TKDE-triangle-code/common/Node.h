@@ -81,41 +81,42 @@ class sample_node
 	 }
 };
 
- class candidate_unit // class for the candidate edge or test edge in each substream, used in both BPS and SWTC. 
- // In BPS, it is the expired but not double-expired test edge. 
- // In SWTC, it is the the not chosen edge in the 2 slices. 
- // To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper).
- // In the other case, it it the edge with largest priority in current slice,
- {
- public:
-	 unsigned int s, d; // nodes of the edge
-	 double priority; // can be computed according to s and d. saved only for convinience
-	 long long timestamp;// 时间戳(长整型)
-	 int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. 
-	 // A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
-	 // A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
-	 int time_list_next; // 在时间列表中后一个元素位置指针
+// class for the candidate edge or test edge in each substream, used in both BPS and SWTC. 
+// In BPS, it is the expired but not double-expired test edge. 
+// In SWTC, it is the the not chosen edge in the 2 slices. 
+// To be precise, in one case, it is the edge with largest priority in the last slice, but expires and servers as a test edge (case 2 in the paper).
+// In the other case, it it the edge with largest priority in current slice, but not chosen (case 1 in the paper).
+class candidate_unit
+{
+	public:
+	unsigned int s, d; // nodes of the edge
+	double priority; // can be computed according to s and d. saved only for convinience
+	long long timestamp;
+	int time_list_prev; // 在时间列表中前一个元素位置指针 suppose the size of the sample table is m. 
+	// A pointer in value range 0 ~ m-1 means sample unit in the corresponding table pos. 
+	// A pointer in value range m ~ 2m-1 means candidate unit in the corresponding table pos. -1 means an empty pointer.
+	int time_list_next; // 在时间列表中后一个元素位置指针
 
-     candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)
-	 {
-		 s = snum;
-		 d = dnum;
-		 priority = p;
-		 timestamp = time;
-		 time_list_prev = prev;
-		 time_list_next = next;
-	 }
+	candidate_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = 1)
+	{
+		s = snum;
+		d = dnum;
+		priority = p;
+		timestamp = time;
+		time_list_prev = prev;
+		time_list_next = next;
+	}
 
-     void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
-	 {
-		 s = snum;
-		 d = dnum;
-		 priority = p;
-		 timestamp = time;
-		 time_list_prev = prev;
-		 time_list_next = next;
-	 }
- };
+	void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
+	{
+		s = snum;
+		d = dnum;
+		priority = p;
+		timestamp = time;
+		time_list_prev = prev;
+		time_list_next = next;
+	}
+};
  
 class sample_unit  // class for the sampled edge in each substream, used both in SWTC and BPS
 {
@@ -149,6 +150,7 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 	void set_last_d(int d){pointers[last_d] = d;}
 
     // s_num: 4822 d_num: 2 p: 0.34361265638734362 time: 0 prev: -1 next:-1
+    // s_num: 6437 d_num: 2 p: 0.045699954300045698 time: 10701850 prev: 34841 next:-1
 	void reset(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
 		s = snum;

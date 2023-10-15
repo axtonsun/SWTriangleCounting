@@ -88,6 +88,7 @@ int count_join(vector<T> &s, vector<T> &d, vector<T> &common_neighbor)
         else
         {
                 std::sort(s.begin(), s.end());
+
                 for (int i = 0; i < d.size(); i++)
                 {
                         int l = 0;
@@ -103,7 +104,7 @@ int count_join(vector<T> &s, vector<T> &d, vector<T> &common_neighbor)
                                 else if (d[i] < s[tmp])
                                         r = tmp - 1;
                                 else
-                                        l = tmp + 1;
+                                        l = tmp + 1; // l = 1
                         }
                 }
         }

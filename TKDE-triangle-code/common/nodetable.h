@@ -69,7 +69,6 @@ public:
 
 };
 
-
 sample_node* NodeTable::insert(unsigned long node, int edge) // node:4822 edge:-1 / node:2 edge:-1
 {
 	int min_length = 0x7FFFFFFF;// 2147483647
@@ -213,10 +212,12 @@ sample_node* NodeTable::ID_to_pos(unsigned long node)
 	for (int i = 0; i<k; i++)
 	{
 		// pos: 5775=2457065775 % 20000
-        // 14014 11505 3554
+        // 14014 11505 3554 / 9530 15650 17061 16883 
+		//					/ 9530
 		unsigned int pos = (*hfunc[i])((unsigned char*)(node_s.c_str()), node_s.length()) % slice_length;
 		// address:5775 = 0*20000+5775
-        // 34014 51505 63554
+        // 34014 51505 63554 / 9530 35650 57061 76883
+		//					/ 9530
 		int address = i*slice_length + pos;
 
 		// nodeID:0 node: 4822

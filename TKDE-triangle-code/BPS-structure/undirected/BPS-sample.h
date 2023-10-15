@@ -22,7 +22,8 @@ public:
 	double sample_prob;
 	int hashindex;
 
-    // 初始化函数，参数与 sample.h 的初始化函数相同
+    // 函数初始化
+	// size: 子流大小 w: 滑动窗口大小 hi: 哈希索引
 	BPSsample(int size, int w, int hi)
 	{
 		st = new BPSSampleTable(size);
@@ -36,6 +37,7 @@ public:
 	}
 
     // 处理新边
+	// s: 源节点 d: 目标节点 time: 时间戳(当前数据的时间戳 - 第一条数据的时间戳)
 	void proceed(unsigned long s, unsigned long d, long time)
 	{
 		if (s < d)
@@ -56,16 +58,8 @@ public:
 		// 更新当前时间
 		current_time = time;
 		// 更新滑动窗口
-		// time: 当前时间
-		// time-window_size: 当前时间减去窗口大小
-		// time-2*window_size: 当前时间减去两倍窗口大小
 		st->update(time-window_size, time-2*window_size);
-		// 插入新边
-		// s: 顶点1
-		// d: 顶点2
-		// p: 边的优先级
-		// time: 当前时间
-		// hashindex: 哈希索引
+		
 		st->insert(s, d, p, time, hashindex);
 	}
 

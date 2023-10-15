@@ -43,7 +43,7 @@ public:
 			if(type==0)
 				table[pos].time_list_prev = aim;
 			else
-				table[pos].time_list_next = aim; 
+				table[pos].time_list_next = aim; // table[34841].time_list_next = 8627
 		}
 		else  // set the time list pointer of candidate unit at the corresponding pos 
 		{
@@ -59,7 +59,7 @@ public:
     void replace_sample(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the sample edge at pos with a new edge;
 	{
 		// the cross list will be changed in the upper level, as node table is needed.
-		int tsl_pos = pos; // 34841
+		int tsl_pos = pos; // 34841 8627
 		
 		int prev = table[pos].time_list_prev;
 		int next = table[pos].time_list_next;
@@ -67,6 +67,7 @@ public:
 		set_time_list(prev, 1, next); // -1 1 -1
 		set_time_list(next, 0, prev); // -1 0 -1
 
+		// tsl_pos: 8627 其余三项: 34841
 		if(tsl_head == tsl_pos)
 			tsl_head = next;
 		if(expiration == tsl_pos)
@@ -74,13 +75,12 @@ public:
 		if(tsl_tail == tsl_pos)
 			tsl_tail = prev;  // split this pos from the time list.
 
-        // sample unit* table
         // s_num: 4822 d_num: 2 p: 0.34361265638734362 time: 0 prev: -1 next:-1
 		table[pos].reset(s_num, d_num, p, time, tsl_tail, -1); // insert the new edge;
 		
-		set_time_list(tsl_tail, 1, tsl_pos); // -1 1 34841
+		set_time_list(tsl_tail, 1, tsl_pos); // -1 1 34841 / 34841 1 8627
 		
-		tsl_tail = tsl_pos; // 34841
+		tsl_tail = tsl_pos; // 34841 / 8627
 		if(tsl_head == -1)
 			tsl_head = tsl_pos; //34841
 		if(expiration == -1)
