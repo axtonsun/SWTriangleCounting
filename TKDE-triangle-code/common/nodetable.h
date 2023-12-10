@@ -21,11 +21,11 @@ public:
             table = new sample_node[length];
 			for (int i = 0; i<length; i++)
 				// table 中的每个点进行初始化 - 总共有8万~24万
-                // 	nodeID = 0;
-                //	next = NULL;
-                //	first_edge = -1;
-                //	local_count = 0;
-                //	vision_count = 0;
+                // nodeID = 0;
+                // next = NULL;
+                // first_edge = -1;
+                // local_count = 0;
+                // vision_count = 0;
                 table[i].init(0);
 		}
 
@@ -77,13 +77,16 @@ sample_node* NodeTable::insert(unsigned long node, int edge) // node:4822 edge:-
 
 	string node_s = my_to_string(node);
 
+	// k: 4
 	for (int i = 0; i<k; i++)
 	{
 		// 5775 14014 11405 3554
+		// slice_length: 2万~6万
         unsigned int pos = (*hfunc[i])((unsigned char*)(node_s.c_str()), node_s.length()) % slice_length;
 		// 5775 34014 51505 63554
         int address = i*slice_length + pos;
 
+		// tablep[0~79999] 总共 2倍的边数量(size: 4万)
 		if (table[address].nodeID == 0)
 		{
 			if (empty_pos<0) // empty_pos: -1

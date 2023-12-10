@@ -123,25 +123,25 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 	public:
 	unsigned int s, d;
 	double priority;
-	long long timestamp;    
+	long long timestamp;
 	int pointers[4]; // cross lists for the graph structure;
 	int time_list_prev; // same as the pointers in candidate unit;
 	int time_list_next;
 	candidate_unit vice;
 
     // edgetable.h 中 EdgeTable 构造函数调用
-    // snum =0
+    // snum = 0
 	sample_unit(unsigned int snum = 0, unsigned int dnum = 0, double p = -1, long long time = -1, int prev = -1, int next = -1)
 	{
-		s = snum;
-		d = dnum;
+		s = snum; // 0
+		d = dnum; // 0
 		for(int i=0;i<4;i++)
-			pointers[i] = -1;
-		priority = p;
-		timestamp = time;
-		time_list_prev = prev;
-		time_list_next = next;
-		vice.reset();
+			pointers[i] = -1; // -1
+		priority = p; // -1
+		timestamp = time; // -1
+		time_list_prev = prev; // -1 
+		time_list_next = next; // -1
+		vice.reset(); // 0 0 -1 -1 -1 -1
 	}
 
     void set_next_s(int s){pointers[next_s] = s;}
@@ -158,8 +158,8 @@ class sample_unit  // class for the sampled edge in each substream, used both in
 		for(int i=0;i<4;i++)
 			pointers[i] = -1;
 		priority = p; // priority: 0.34361265638734362
-		timestamp = time; // 0
-		time_list_prev = prev; // -1
-		time_list_next = next; // -1
+		timestamp = time; //
+		time_list_prev = prev; //
+		time_list_next = next; //
 	}
 }; 

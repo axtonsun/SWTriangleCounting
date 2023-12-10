@@ -113,7 +113,6 @@ int count_join(vector<T> &s, vector<T> &d, vector<T> &common_neighbor)
 }
 
 template<typename T>
-
 unsigned long long weighted_count(vector<T> &s, vector<T> &d, map<T, int> &ms, map<T, int> &md)
 {
     if (s.empty() || d.empty())

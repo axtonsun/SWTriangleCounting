@@ -14,8 +14,8 @@ struct count_result
 class SampleTable
  {
  	public:
- 	EdgeTable* edge_table;
-	NodeTable* node_table;
+ 	EdgeTable* edge_table; // common/edgetable.h
+	NodeTable* node_table; // common/nodetable.h
  	int size;
 	int edge_count;
 	int node_count;
@@ -99,14 +99,14 @@ class SampleTable
 			edge_d = next_index;
 		}
 		vector<unsigned int> cn;
-		count_join(v1, v2, cn);
+		count_join(v1, v2, cn);//
 		for(int i=0;i<cn.size();i++)
 		{
 			int u = cn[i];
 			(node_table->ID_to_pos(u))->local_count += op;
 			pos_s->local_count += op;
 			pos_d->local_count += op;
-			trcount += op;
+			trcount += op; //
 		}
 		cn.clear();
 		vector<unsigned int>().swap(cn);
@@ -723,7 +723,6 @@ class SampleTable
     void update(long long time, long long land_mark, long long last_mark)
 	{
 		// time(这里的time是当前时间-滑动窗口大小): time - window-size
-
 		int tsl_pos = edge_table->tsl_head;
 		// -1 < 0 return
 		if(tsl_pos < 0)
@@ -733,7 +732,6 @@ class SampleTable
 		// 只要边表位置pos处的时间戳 小于 time(当前时间(T)-滑动窗口(W))，就一直循环
 		while (edge_table->table[pos].timestamp < time)
 		{
-
 			tsl_pos = edge_table->table[pos].time_list_next;
 
 			// if the vice edge is elder than the last_mark, then it is a left test edge and need to be cleaned.
@@ -748,7 +746,7 @@ class SampleTable
 
 				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
 				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
-				modify_triangle(old_s, old_d, last_mark, -1);
+				modify_triangle(old_s, old_d, last_mark, -1); // 
 				dismiss(old_s, old_d, pos);
 				sample_unit tmp = edge_table->table[pos];
 	
@@ -788,7 +786,7 @@ class SampleTable
 			{
 				sample_node* old_s = node_table->ID_to_pos(edge_table->table[pos].s);
 				sample_node* old_d = node_table->ID_to_pos(edge_table->table[pos].d);
-				modify_triangle(old_s, old_d, last_mark, -1);
+				modify_triangle(old_s, old_d, last_mark, -1); // 
 				dismiss(old_s, old_d, pos);
 				valid_num--;
 

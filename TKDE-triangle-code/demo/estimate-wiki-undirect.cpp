@@ -54,9 +54,10 @@ int main()
 
                 // 从输入流中读取数据到变量s,d,t
                 while(fin>>s>>d>>t)
-                {
+                {                    
                     // t0 初始化为 -1，如果t0小于0，t0=t；然后两顶点值各自+1
                     // t0 就是数据集的第一个数据的时间戳
+
                     if(t0<0) t0 = t;
                     s = s + 1;
                     d = d + 1;
@@ -69,10 +70,11 @@ int main()
                     bc->proceed(s, d, count);
                     sc->proceed(s, d, count);
                     gc->insert_edge(s,d,count);
-                    
+
                     // 当时间戳相差 大于等于 两倍时间滑动窗口 && count/checkpoint 大于 tmp_point
                     if (count >= 2*wsize && int(count/checkpoint) > tmp_point)	// whenever the window
                     {
+                        
                         srand((int)time(0));
                         // tmp_point 从20开始递增+1
                         // 时间戳相差/checkpoint
@@ -80,7 +82,7 @@ int main()
                         // ac->prepare();
                         bc->prepare();
                         sc->prepare();
-
+                
                         // 有效数量 / 边估计值(为估算出的滑动窗口内互异边数量 n) / 样本图中的全局三角形个数 / 流图中的全局三角形个数
                         // fout<<"asyn triangle "<< ac->valid_count() <<' '<<ac->edge_estimate<<' '<<ac->ss->trcount<<' '<<ac->count()<<endl;
                         fout<<"BPS triangle "<<bc->st->valid_num<<' '<<bc->edge_estimate<<' '<<bc->st->trcount<<' '<<bc->count()<<endl;

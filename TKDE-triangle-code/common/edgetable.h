@@ -17,7 +17,7 @@ public:
 	EdgeTable(int s)
 	{
 		size = s; // 4万~12万
-        // sample_unit 里面由 candidate_unit(vice)
+        // sample_unit 里面有 candidate_unit(vice)
 		table = new sample_unit[s]; // 4万~12万
 		tsl_head = -1;
 		tsl_tail = -1;
@@ -34,17 +34,20 @@ public:
 		delete[]table;
 	}
 	
+	// 设置时间列表的指针
 	void set_time_list(int pos, int type, int aim) // type == 0 means prev pointer, and type == 1 means next pointer
  	{
+		//为了防止无效的位置输入
  		if(pos == -1)
 		 	return; 
- 		if(pos < size) // set the time list pointer of sample unit at the corresponding pos 
+ 		// 将采样单元的时间列表指针设置为对应位置(pos) / 这里的 size 4w~12w
+		if(pos < size) // set the time list pointer of sample unit at the corresponding pos 
 		{
 			if(type==0)
 				table[pos].time_list_prev = aim;
 			else
 				table[pos].time_list_next = aim; // table[34841].time_list_next = 8627
-		}
+		} // 否则将候选单元的时间列表指针设置为对应位置(pos)
 		else  // set the time list pointer of candidate unit at the corresponding pos 
 		{
 			if(type==0)
@@ -56,13 +59,14 @@ public:
 	}	
 
 	// 用一个新的边替换一个样本边
+	// 即 在pos位置上用新的边替换原来的边
     void replace_sample(unsigned int s_num, unsigned int d_num, double p, long long time, int pos) // replace the sample edge at pos with a new edge;
 	{
 		// the cross list will be changed in the upper level, as node table is needed.
 		int tsl_pos = pos; // 34841 8627
 		
-		int prev = table[pos].time_list_prev;
-		int next = table[pos].time_list_next;
+		int prev = table[pos].time_list_prev; // -1
+		int next = table[pos].time_list_next; // -1
 
 		set_time_list(prev, 1, next); // -1 1 -1
 		set_time_list(next, 0, prev); // -1 0 -1

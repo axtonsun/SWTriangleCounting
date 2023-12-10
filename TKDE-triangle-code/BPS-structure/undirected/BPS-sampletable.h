@@ -21,13 +21,13 @@ using namespace std;
 
  	BPSSampleTable(int s)
  	{
- 		size = s;
+ 		size = s; // 4万~12万
 		edge_count = 0;
 		node_count = 0;
 		valid_num = 0;
 		trcount = 0;
-		edge_table = new EdgeTable(s);
-		node_table = new NodeTable(4, s*2);
+		edge_table = new EdgeTable(s); // 4万~12万
+		node_table = new NodeTable(4, s*2); // 4 8万~24万
 		q_count = size;
 
 	 }
@@ -122,7 +122,7 @@ using namespace std;
 		return;
 	}
 
-	// 通过更新边表来连接图中的两个节点
+	// 通过更新边表来连接图中的两个节点(两个sample_node类型的指针pos_s和pos_d)
 	void link_list(sample_node* pos_s, sample_node* pos_d, int pos)
 	{
 		// 提取两个输入节点的节点ID，并将其存储在 s_num 和 d_num 中
@@ -251,7 +251,9 @@ using namespace std;
 		// 针对第一条数据而言是存放在第34841个子流中
 		unsigned int pos = (*hfunc[hashindex+1])((unsigned char*)(edge.c_str()), edge.length())%size;
 
-		// 采样边的源节点和目标节点都为 0 (即无采样边(bucket为空 / 只有测试项))
+		// 【采样边】的源节点和目标节点都为 0 (即无采样边(bucket为空 / 只有测试项))
+		// sample_unit: edge_table->table[pos]
+		// candidate_unit: edge_table->table[pos].vice
 		if (edge_table->table[pos].s == 0 && edge_table->table[pos].d == 0) // no sample edge, then 2 cases: the bucket is empty, or only has test item;
 		{
 			// 用一个 新的边 替换一个 样本边
@@ -263,13 +265,13 @@ using namespace std;
 			// 返回NULL 进入条件语句
 			if (!pos_s)
 			{
-				pos_s = node_table->insert(s_num);
-				node_count++;
+				pos_s = node_table->insert(s_num); // 插入点
+				node_count++; // 点数+1
 			}
 			if (!pos_d)
 			{
-				 pos_d = node_table->insert(d_num);
-				 node_count++;
+				 pos_d = node_table->insert(d_num); // 插入点
+				 node_count++; // 点数+1
 			}
 			// node_count:2 +1(s:4822) +1(d:2)
 
@@ -407,19 +409,27 @@ using namespace std;
 	// and after this function the new sampled edge (valid or not) should be added into the curresponding cross lists;（新采样的边（有效或无效）应添加到相应的交叉列表中）
 	void update(long long ex_time, long long de_time)  
 	{
+		// ex_time: 当前数据的时间戳 - 窗口大小
+		// de_time: 当前数据的时间戳 - 2 * 窗口大小
+		
 		// expiration 过期但没有双重过期的边 / 未过期的边
 		// -1 34841 9270
-		if (edge_table->expiration==-1)
+		if (edge_table->expiration == -1)
 			return;
 		int tsl_pos = edge_table->expiration;
 		int pos = tsl_pos % size; // 34841 % 40000 = 34841
 
 		// 采样边(sample edge)的时间戳 小于 当前时间-窗口大小
 		// 该边过期被纳入到测试边(test edge)中
+		// 第 pos 个子流中边的时间戳 是否小于 当前时间 - 窗口大小
 		while (edge_table->table[pos].timestamp < ex_time) // the expired edge mush be a sampled edge rather than a test edge
 		{
+			// 如果小于
 			// 取出过期边的下一个边
-		 	tsl_pos = edge_table->table[pos].time_list_next;
+			cout << "prev: " << edge_table->table[pos].time_list_prev << " " << ex_time << endl;
+			cout << "next: " << edge_table->table[pos].time_list_next << " " << ex_time << endl;
+		 	
+			tsl_pos = edge_table->table[pos].time_list_next;
 		 	
 			sample_node* pos_s = node_table->ID_to_pos(edge_table->table[pos].s);
 			sample_node* pos_d = node_table->ID_to_pos(edge_table->table[pos].d);

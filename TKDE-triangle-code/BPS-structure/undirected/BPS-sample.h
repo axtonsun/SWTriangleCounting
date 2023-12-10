@@ -7,6 +7,7 @@
 #include "../../common/undirected-setting.h"
 #define setting
 #endif
+
 #include "BPS-sampletable.h"
 
 using namespace std;

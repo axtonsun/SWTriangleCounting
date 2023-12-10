@@ -16,7 +16,7 @@ using namespace std;
 class sample
 {
 public:
-	SampleTable* st; // 指向 SampleTable 类型的指针
+	SampleTable* st; // 指向 SampleTable 类型的指针 | SWTC-structure/undirected/sampletable.h	
 	int window_size;
 	long long current_time;
 	long long land_mark;
