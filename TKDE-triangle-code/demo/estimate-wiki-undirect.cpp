@@ -15,7 +15,7 @@ int main()
         long long t;
         string t1, t2, p;
 
-        double time_unit = 18.545;	// the unit of the window length, we use average time span as unit, namely (maximum timestamp - minimum timestamp)/number_of_edges.
+        double time_unit = 3.775;	// the unit of the window length, we use average time span as unit, namely (maximum timestamp - minimum timestamp)/number_of_edges.
         // Stackoverflow: (1457273428 - 1217567877) / 63497050 = 3.775
         // WikiTalk: (1449042928 - 985765204) / 24981163 = 18.545
         // Actor: (2521428675 - 1693552096) / 33115812 = 24.999
@@ -29,8 +29,8 @@ int main()
                 long wsize = gap*time_unit; // wsize = 2百万*平均时间跨度 Wiki:3709万 Stack: 755万
                 long count = 0;
 
-                ifstream fin("../data/WikiTalk.txt");
-                string index = "../result/undirect/Wiki/EstimateResult_wiki_undirect_2M_h";
+                ifstream fin("../data/StackOverFlow.txt");
+                string index = "../result/undirect/Stack/EstimateResult_stack_undirect_2M_h";
                 // EstimateResult_wiki_undirect_2M_h?_xx
                 // ？是哈希索引，从0变化到4
                 // xx是 (子流数量)/2万
@@ -81,7 +81,7 @@ int main()
                         tmp_point = count/checkpoint; // tmp_point: 20 count:74180246 checkpoint: 3709000
                         // ac->prepare();
                         bc->prepare();
-                        sc->prepare();
+                        sc->prepare(); // HLL
                 
                         // 有效数量 / 边估计值(为估算出的滑动窗口内互异边数量 n) / 样本图中的全局三角形个数 / 流图中的全局三角形个数
                         // fout<<"asyn triangle "<< ac->valid_count() <<' '<<ac->edge_estimate<<' '<<ac->ss->trcount<<' '<<ac->count()<<endl;

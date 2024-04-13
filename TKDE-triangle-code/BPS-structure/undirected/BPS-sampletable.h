@@ -426,8 +426,8 @@ using namespace std;
 		{
 			// 如果小于
 			// 取出过期边的下一个边
-			cout << "prev: " << edge_table->table[pos].time_list_prev << " " << ex_time << endl;
-			cout << "next: " << edge_table->table[pos].time_list_next << " " << ex_time << endl;
+			// cout << "prev: " << edge_table->table[pos].time_list_prev << " " << ex_time << endl;
+			// cout << "next: " << edge_table->table[pos].time_list_next << " " << ex_time << endl;
 		 	
 			tsl_pos = edge_table->table[pos].time_list_next;
 		 	

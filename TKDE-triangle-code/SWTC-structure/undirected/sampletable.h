@@ -695,7 +695,7 @@ class SampleTable
 						 {
 							 pos_d = node_table->insert(d_num);
 							 node_count++;
-						 }					// if the node is not in the table ,insert it
+						 }	// if the node is not in the table ,insert it
 						 link_list(pos_s, pos_d, pos, s_num, d_num);
 						 modify_both(pos_s, pos_d, last_mark, land_mark, 1);
 					 }

@@ -97,11 +97,12 @@ public:
 		int m = st->size; // 40000
 		double alpha = 0.7213 / (1 + (1.079 / m)); // alpha: 0.72128054345734038
 		// st->q_count: 34834.332702636719
-        int total_num = (double(alpha * m * m) / (st->q_count));// 33129
+        int total_num = (double(alpha * m * m) / (st->q_count));// 33129 |
 		int sample_num = st->valid_num; // 7588
 
         if (total_num < 2.5*m)
 			total_num = -log(1 - double(st->edge_count) / m)*m; // 8414
+		// 
 		total_num = total_num *(double(st->valid_num) / st->edge_count); // 8414 * (7588/7588)
 
         edge_estimate = total_num; // 8414

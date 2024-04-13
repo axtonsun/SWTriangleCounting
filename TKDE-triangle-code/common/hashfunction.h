@@ -648,7 +648,7 @@ unsigned long long MurmurHash64B ( const void * key, int len, unsigned int seed=
         return h;  
     }
 	   
-    unsigned int MurmurHash(const unsigned char *key, unsigned int len)  
+        unsigned int MurmurHash(const unsigned char *key, unsigned int len)  
         {  
             const unsigned int m = 0x5bd1e995;  
             const int r = 24;  
